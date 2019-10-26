@@ -6,6 +6,7 @@ namespace PadTap
     public class Indicator : MonoBehaviour
     {
         [SerializeField] [Range(0, 5)] float lifespan = 2;
+        [SerializeField]
 
         Animator animator;
 
@@ -29,13 +30,19 @@ namespace PadTap
 
         private void GameOver()
         {
+            FindObjectOfType<Spawner>().GameOver();
             Debug.Log("lost");
         }
 
-        public void Clicked()
+        public void Click()
         {
             Debug.Log("plus");
             Destroy(gameObject);
+        }
+
+        public float TimeAlive()
+        {
+            return animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
         }
     }
 }

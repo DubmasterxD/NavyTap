@@ -8,19 +8,35 @@ namespace PadTap
     {
         [SerializeField] Indicator indicatorPrefab = null;
         [SerializeField] List<Tile> tiles = new List<Tile>();
+        [SerializeField] Map map = null;
 
-        private void Start()
+        Coroutine game = null;
+
+        public void StartGame()
         {
-            StartCoroutine(SpawnContinuously());
+            game = StartCoroutine(SpawnContinuously());
         }
 
         IEnumerator SpawnContinuously()
         {
-            while (true)
+            int index = 0;
+            while (index<map.Points.Count)
             {
-                tiles[Random.Range(0, tiles.Count)].Spawn(indicatorPrefab.gameObject);
-                yield return new WaitForSeconds(1);
+                float previousTime = 0;
+                if (index != 0)
+                {
+                    previousTime = map.Points[index - 1].time;
+                }
+                yield return new WaitForSeconds(map.Points[index].time - previousTime);
+                tiles[map.Points[index].tileIndex].Spawn(indicatorPrefab.gameObject);
+                index++;
             }
+            GameOver();
+        }
+
+        public void GameOver()
+        {
+            StopCoroutine(game);
         }
     }
 }
