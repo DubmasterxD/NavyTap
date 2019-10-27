@@ -5,17 +5,16 @@ namespace PadTap
 {
     public class Indicator : MonoBehaviour
     {
-        [SerializeField] [Range(0, 5)] float lifespan = 2;
-        [SerializeField]
-
+        Spawner spawner;
         Animator animator;
 
         private void Awake()
         {
+            spawner = FindObjectOfType<Spawner>();
             animator = GetComponent<Animator>();
         }
 
-        private void Start()
+        public void StartIndicator(float lifespan)
         {
             StartCoroutine(AutoDestroy(lifespan));
             animator.speed = 1 / lifespan;
@@ -36,7 +35,14 @@ namespace PadTap
 
         public void Click()
         {
-            Debug.Log("plus");
+            if (TimeAlive() > spawner.Map.threshold)
+            {
+                Debug.Log("plus");
+            }
+            else
+            {
+                GameOver();
+            }
             Destroy(gameObject);
         }
 

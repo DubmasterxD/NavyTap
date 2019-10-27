@@ -6,9 +6,22 @@ namespace PadTap
     {
         [SerializeField] Transform spawnPoint = null;
 
-        public void Spawn(GameObject toSpawn)
+        Threshold threshold;
+
+        private void Awake()
         {
-            Instantiate(toSpawn, spawnPoint);
+            threshold = GetComponentInChildren<Threshold>();
+        }
+
+        public void SetThreshold(float threshold)
+        {
+            this.threshold.SetThreshold(threshold);
+        }
+
+        public void Spawn(Indicator toSpawn, float lifespan)
+        {
+            Indicator indicator = Instantiate(toSpawn, spawnPoint);
+            indicator.StartIndicator(lifespan);
         }
     }
 }

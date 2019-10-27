@@ -4,14 +4,7 @@ namespace PadTap
 {
     public class Threshold : MonoBehaviour
     {
-        [SerializeField] [Range(0, 1)] float threshold = .8f;
-
-        private void Start()
-        {
-            SetThreshold();
-        }
-
-        private void SetThreshold()
+        public void SetThreshold(float threshold)
         {
             transform.localScale = new Vector3(threshold, threshold, threshold);
         }

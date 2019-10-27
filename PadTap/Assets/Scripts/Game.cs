@@ -3,14 +3,9 @@
 namespace PadTap {
     public class Game : MonoBehaviour
     {
-        bool isRunning = false;
-
         private void Update()
         {
-            if (!isRunning)
-            {
-                StartGame();
-            }
+            StartGame();
         }
 
         private void StartGame()
