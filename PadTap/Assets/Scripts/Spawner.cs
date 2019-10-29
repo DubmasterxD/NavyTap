@@ -7,16 +7,31 @@ namespace PadTap
     public class Spawner : MonoBehaviour
     {
         [SerializeField] List<Tile> tiles = new List<Tile>();
+        [SerializeField] Indicator indicatorPrefab = null;
         [SerializeField] Map map = null;
 
         Coroutine game = null;
 
         public Map Map { get => map; }
 
+        private void Start()
+        {
+            StartGame();
+        }
+
         public void StartGame()
         {
+            map = FindObjectOfType<Game>().chosenMap;
+            FindObjectOfType<Audio>().Play(map.song);
+            StartCoroutine(EndAfterSongEnds());
             game = StartCoroutine(SpawnContinuously());
             SetThresholds(map.threshold);
+        }
+
+        IEnumerator EndAfterSongEnds()
+        {
+            yield return new WaitForSeconds(map.song.length);
+            GameOver();
         }
 
         IEnumerator SpawnContinuously()
@@ -30,10 +45,9 @@ namespace PadTap
                     previousTime = map.points[index - 1].time;
                 }
                 yield return new WaitForSeconds(map.points[index].time - previousTime);
-                tiles[map.points[index].tileIndex].Spawn(map.indicatorPrefab, map.indicatorLifespan);
+                tiles[map.points[index].tileIndex].Spawn(indicatorPrefab, map.indicatorLifespan);
                 index++;
             }
-            GameOver();
         }
 
         private void SetThresholds(float threshold)
@@ -47,6 +61,7 @@ namespace PadTap
         public void GameOver()
         {
             StopCoroutine(game);
+            FindObjectOfType<Scene>().LoadMenu();
         }
     }
 }

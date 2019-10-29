@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51dae878c2ed3244db33cab629e0a952, type: 3}
+  m_Name: Test
+  m_EditorClassIdentifier: 
+  tilesRows: 4
+  tilesColumns: 4
+  threshold: 0.645
+  indicatorLifespan: 1.37
+  points:
+  - time: 1
+    tileIndex: 0
+  - time: 1.5
+    tileIndex: 1
+  - time: 2
+    tileIndex: 0
+  - time: 3
+    tileIndex: 2
+  - time: 5
+    tileIndex: 2
+  - time: 6
+    tileIndex: 8
+  - time: 6.5
+    tileIndex: 9
+  - time: 9
+    tileIndex: 14
+  song: {fileID: 8300000, guid: 6e71fe23e7bbfe24996c964da815bd09, type: 3}

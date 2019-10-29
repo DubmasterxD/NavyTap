@@ -1,18 +1,20 @@
 ﻿using UnityEngine;
 
-namespace PadTap {
+namespace PadTap
+{
     public class Game : MonoBehaviour
     {
-        private void Update()
-        {
-            StartGame();
-        }
+        public Map chosenMap { get; set; }
 
-        private void StartGame()
+        private void Awake()
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (FindObjectsOfType<Game>().Length == 1)
             {
-                FindObjectOfType<Spawner>().StartGame();
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
             }
         }
     }
