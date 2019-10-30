@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tilesRows: 4
   tilesColumns: 4
-  threshold: 0.645
-  indicatorLifespan: 1.37
+  threshold: 0.8
+  indicatorLifespan: 1
   points:
-  - time: 1
+  - time: 0
     tileIndex: 0
-  - time: 1.5
+  - time: 1.4
     tileIndex: 1
   - time: 2
     tileIndex: 0

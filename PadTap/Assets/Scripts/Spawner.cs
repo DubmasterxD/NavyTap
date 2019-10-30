@@ -10,28 +10,36 @@ namespace PadTap
         [SerializeField] Indicator indicatorPrefab = null;
         [SerializeField] Map map = null;
 
-        Coroutine game = null;
+        Coroutine level = null;
 
         public Map Map { get => map; }
 
-        private void Start()
+        private IEnumerator Start()
         {
-            StartGame();
-        }
-
-        public void StartGame()
-        {
-            map = FindObjectOfType<Game>().chosenMap;
-            FindObjectOfType<Audio>().Play(map.song);
-            StartCoroutine(EndAfterSongEnds());
-            game = StartCoroutine(SpawnContinuously());
+            SetMap(FindObjectOfType<Game>().chosenMap);
             SetThresholds(map.threshold);
+            level = StartCoroutine(SpawnContinuously());
+            yield return PlaySong(map.song);
+            StartCoroutine(EndAfterSongEnds());
         }
 
-        IEnumerator EndAfterSongEnds()
+        public void GameOver()
         {
-            yield return new WaitForSeconds(map.song.length);
-            GameOver();
+            StopCoroutine(level);
+            FindObjectOfType<Scene>().LoadMenu();
+        }
+
+        private void SetMap(Map map)
+        {
+            this.map = map;
+        }
+
+        private void SetThresholds(float threshold)
+        {
+            foreach (Tile tile in tiles)
+            {
+                tile.SetThreshold(threshold);
+            }
         }
 
         IEnumerator SpawnContinuously()
@@ -43,25 +51,38 @@ namespace PadTap
                 if (index != 0)
                 { 
                     previousTime = map.points[index - 1].time;
+                    yield return new WaitForSeconds(map.points[index].time - previousTime);
                 }
-                yield return new WaitForSeconds(map.points[index].time - previousTime);
+                else
+                {
+                    if (GetFirstIndicatorSpawnTime() > 0)
+                    {
+                        yield return new WaitForSeconds(GetFirstIndicatorSpawnTime());
+                    }
+                }
                 tiles[map.points[index].tileIndex].Spawn(indicatorPrefab, map.indicatorLifespan);
                 index++;
             }
         }
 
-        private void SetThresholds(float threshold)
+        private IEnumerator PlaySong(AudioClip song)
         {
-            foreach(Tile tile in tiles)
+            if (GetFirstIndicatorSpawnTime() < 0)
             {
-                tile.SetThreshold(threshold);
+                yield return new WaitForSeconds(-GetFirstIndicatorSpawnTime());
             }
+            FindObjectOfType<Audio>().Play(song);
         }
 
-        public void GameOver()
+        private float GetFirstIndicatorSpawnTime()
         {
-            StopCoroutine(game);
-            FindObjectOfType<Scene>().LoadMenu();
+            return map.points[0].time - ((1 - map.threshold) / 2 + map.threshold) * map.indicatorLifespan;
+        }
+
+        IEnumerator EndAfterSongEnds()
+        {
+            yield return new WaitForSeconds(map.song.length);
+            GameOver();
         }
     }
 }

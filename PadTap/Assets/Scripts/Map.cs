@@ -18,7 +18,6 @@ namespace PadTap
         {
             public float time = 0f;
             public int tileIndex = 0;
-            //TODO SFX (maybe)
         }
     }
 }
