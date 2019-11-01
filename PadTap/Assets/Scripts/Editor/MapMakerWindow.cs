@@ -15,6 +15,8 @@ public class MapMakerWindow : EditorWindow
     [Range(0, 5)] float indicatorLifespan = 2;
     List<Point> points = new List<Point>();
 
+    GUISkin skin;
+
     [System.Serializable]
     public class Point
     {
@@ -32,7 +34,8 @@ public class MapMakerWindow : EditorWindow
     static void OpenWindow()
     {
         MapMakerWindow window = GetWindow<MapMakerWindow>("Map Maker");
-        //window.minSize = new Vector2(500, 500);
+        window.minSize = new Vector2(500, 500);
+        window.maxSize = new Vector2(500, 500);
         window.Show();
     }
 
@@ -42,6 +45,11 @@ public class MapMakerWindow : EditorWindow
         {
             Repaint();
         }
+    }
+
+    private void OnEnable()
+    {
+        skin = Resources.Load<GUISkin>("Test");
     }
 
     private void OnGUI()
@@ -60,8 +68,27 @@ public class MapMakerWindow : EditorWindow
             song = (AudioClip)EditorGUILayout.ObjectField("Song", song, typeof(AudioClip), false);
             if (song != null)
             {
+                tilesRows = EditorGUILayout.IntField("Rows", tilesRows);
+                if (tilesRows > 6)
+                {
+                    tilesRows = 6;
+                }
+                if (tilesRows < 1)
+                {
+                    tilesRows = 1;
+                }
+                tilesColumns = EditorGUILayout.IntField("Columns", tilesColumns);
+                if (tilesColumns > 6)
+                {
+                    tilesColumns = 6;
+                }
+                if (tilesColumns < 1)
+                {
+                    tilesColumns = 1;
+                }
                 currentTime = Mathf.Round(currentTime * 100) / 100;
                 currentTime = EditorGUILayout.Slider(currentTime, 0, song.length);
+                //EditorGUI.ProgressBar(new Rect(7, 36, 432, 18), currentTime / song.length, "asa");
                 if(GUILayout.Button("Begin Creating"))
                 {
                     points = new List<Point>();
@@ -82,78 +109,18 @@ public class MapMakerWindow : EditorWindow
                     audioSource.Stop();
                 }
                 EditorGUILayout.EndHorizontal();
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("0"))
+                for (int i = 0; i < tilesRows; i++)
                 {
-                    AddPoint(0);
+                    EditorGUILayout.BeginHorizontal(skin.GetStyle("Center"));
+                    for (int j = 0; j < tilesColumns; j++)
+                    {
+                        if (GUILayout.Button((i * tilesColumns + j).ToString(), skin.button))
+                        {
+                            AddPoint(i*tilesColumns + j);
+                        }
+                    }
+                    EditorGUILayout.EndHorizontal();
                 }
-                if (GUILayout.Button("1"))
-                {
-                    AddPoint(1);
-                }
-                if (GUILayout.Button("2"))
-                {
-                    AddPoint(2);
-                }
-                if (GUILayout.Button("3"))
-                {
-                    AddPoint(3);
-                }
-                EditorGUILayout.EndHorizontal();
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("4"))
-                {
-                    AddPoint(4);
-                }
-                if (GUILayout.Button("5"))
-                {
-                    AddPoint(5);
-                }
-                if (GUILayout.Button("6"))
-                {
-                    AddPoint(4);
-                }
-                if (GUILayout.Button("7"))
-                {
-                    AddPoint(5);
-                }
-                EditorGUILayout.EndHorizontal();
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("8"))
-                {
-                    AddPoint(4);
-                }
-                if (GUILayout.Button("9"))
-                {
-                    AddPoint(5);
-                }
-                if (GUILayout.Button("10"))
-                {
-                    AddPoint(4);
-                }
-                if (GUILayout.Button("11"))
-                {
-                    AddPoint(5);
-                }
-                EditorGUILayout.EndHorizontal();
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("12"))
-                {
-                    AddPoint(4);
-                }
-                if (GUILayout.Button("13"))
-                {
-                    AddPoint(5);
-                }
-                if (GUILayout.Button("14"))
-                {
-                    AddPoint(4);
-                }
-                if (GUILayout.Button("15"))
-                {
-                    AddPoint(5);
-                }
-                EditorGUILayout.EndHorizontal();
                 if (GUILayout.Button("Save"))
                 {
                     SaveMap();
