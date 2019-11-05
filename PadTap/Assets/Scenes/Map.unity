@@ -580,7 +580,7 @@ MonoBehaviour:
   - {fileID: 93902971}
   indicatorPrefab: {fileID: 1968267812171417110, guid: 74d77f3f93e66294cb0d4e5565935231,
     type: 3}
-  map: {fileID: 11400000, guid: aa169b1bb2a4cec45bccf2a9d63ddb03, type: 2}
+  map: {fileID: 11400000, guid: 8231e12047f93f64c998324c11092de7, type: 2}
 --- !u!1001 &839141697
 PrefabInstance:
   m_ObjectHideFlags: 0

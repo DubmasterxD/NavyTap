@@ -11,7 +11,9 @@ namespace PadTap
         [Range(0, 1)] public float threshold = .8f;
         [Range(0, 5)] public float indicatorLifespan = 2;
         public List<Point> points = null;
-        public AudioClip song = null; 
+        public AudioClip song = null;
+        public string songName = "";
+        public string copyright = "";
 
         [System.Serializable]
         public class Point
