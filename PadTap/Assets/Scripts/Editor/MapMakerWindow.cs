@@ -1,15 +1,16 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using System;
 
 public class MapMakerWindow : EditorWindow
 {
+    PadTap.Map map = null;
     AudioClip song;
     float currentTime = 0;
     AudioSource audioSource;
     string songName = "";
     string copyright = "";
-    PadTap.Map map;
     int tilesRows = 4;
     int tilesColumns = 4;
     [Range(0, 1)] float threshold = .8f;
@@ -18,11 +19,12 @@ public class MapMakerWindow : EditorWindow
     static Vector2 windowSize = new Vector2(400, 600);
     float deltaTime = 1;
     bool canCreate = false;
+    Point currentPoint = null;
 
     GUISkin skin;
 
     [System.Serializable]
-    public class Point
+    public class Point : IComparable
     {
         public float time = 0f;
         public int tileIndex = 0;
@@ -31,6 +33,16 @@ public class MapMakerWindow : EditorWindow
         {
             this.time = time;
             this.tileIndex = tileIndex;
+        }
+
+        public int CompareTo(object obj)
+        {
+            Point p = (Point)obj;
+            if (p.time > time)
+            {
+                return -1;
+            }
+            return 1;
         }
     }
 
@@ -64,6 +76,7 @@ public class MapMakerWindow : EditorWindow
         }
         else
         {
+            songName = EditorGUILayout.TextField("Song Name", songName);
             if (audioSource.isPlaying)
             {
                 currentTime = audioSource.time;
@@ -88,34 +101,47 @@ public class MapMakerWindow : EditorWindow
             {
                 if (!canCreate)
                 {
+                    EditorGUILayout.LabelField("Copyright:");
                     copyright = EditorGUILayout.TextArea(copyright);
-                    if (copyright=="")
+                    if (copyright == "")
                     {
                         EditorGUILayout.HelpBox("Valid copyright informations are necessary!", MessageType.Warning);
                     }
                     else if (GUILayout.Button("Begin Creating"))
                     {
                         canCreate = true;
+                        map = new PadTap.Map();
                     }
                 }
                 else
                 {
-                    songName = EditorGUILayout.TextField("Song Name", songName);
                     threshold = Mathf.Clamp01(EditorGUILayout.FloatField("Threshold", threshold));
                     indicatorLifespan = Mathf.Clamp(EditorGUILayout.FloatField("Indicator Lifespan", indicatorLifespan), 0, 10);
                     tilesRows = Mathf.Clamp(EditorGUILayout.IntField("Rows", tilesRows), 1, 6);
                     tilesColumns = Mathf.Clamp(EditorGUILayout.IntField("Columns", tilesColumns), 1, 6);
-                    if(currentTime > song.length)
+                    EditorGUILayout.BeginHorizontal();
+                    if (GUILayout.Button("Play"))
                     {
-                        currentTime = Mathf.Floor((currentTime-0.01f) * 100) / 100;
+                        if (!audioSource.isPlaying)
+                        {
+                            audioSource.clip = song;
+                            audioSource.time = currentTime;
+                            audioSource.Play();
+                        }
+                    }
+                    if (GUILayout.Button("Stop"))
+                    {
+                        currentTime = audioSource.time;
+                        audioSource.Stop();
+                    }
+                    EditorGUILayout.EndHorizontal();
+                    if (currentTime > song.length)
+                    {
+                        currentTime = Mathf.Floor((currentTime - 0.01f) * 100) / 100;
                     }
                     currentTime = Mathf.Round(currentTime * 100) / 100;
                     currentTime = EditorGUILayout.Slider(currentTime, 0, song.length);
                     //EditorGUI.ProgressBar(new Rect(7, 36, 432, 18), currentTime / song.length, "asa");
-                    if (GUILayout.Button("Begin Creating"))
-                    {
-                        points = new List<Point>();
-                    }
                     EditorGUILayout.BeginHorizontal();
                     if (GUILayout.Button("Back"))
                     {
@@ -132,7 +158,6 @@ public class MapMakerWindow : EditorWindow
                     if (GUILayout.Button("Front"))
                     {
                         currentTime += deltaTime;
-                        Debug.Log(currentTime);
                         if (currentTime > song.length)
                         {
                             audioSource.time = song.length - 0.001f;
@@ -145,20 +170,64 @@ public class MapMakerWindow : EditorWindow
                     deltaTime = EditorGUILayout.FloatField("Delta Time", deltaTime);
                     deltaTime = Mathf.Round(deltaTime * 100) / 100;
                     EditorGUILayout.EndHorizontal();
-                    EditorGUILayout.BeginHorizontal();
-                    if (GUILayout.Button("Play"))
+                    Rect a = EditorGUILayout.BeginHorizontal();
+                    if (points.Count > 0)
                     {
-                        if (!audioSource.isPlaying)
+                        currentPoint = points[0];
+                        foreach (Point point in points)
                         {
-                            audioSource.clip = song;
-                            audioSource.time = currentTime;
-                            audioSource.Play();
+                            if (point.time <= currentTime)
+                            {
+                                currentPoint = point;
+                            }
                         }
                     }
-                    if (GUILayout.Button("Stop"))
+                    string chosen = "-";
+                    if (points.Count !=0)
                     {
-                        currentTime = audioSource.time;
-                        audioSource.Stop();
+                        chosen = currentPoint.time.ToString();
+                    }
+                    if (EditorGUILayout.DropdownButton(new GUIContent(chosen), FocusType.Keyboard))
+                    {
+                        GenericMenu menu = new GenericMenu();
+                        GenericMenu.MenuFunction2 func = ChangePoint;
+                        for(int i=0; i < points.Count; i++)
+                        {
+                            menu.AddItem(new GUIContent(points[i].time.ToString()), points[i].time == currentPoint.time, func, i);
+                        }
+                        menu.DropDown(a);
+                    }
+                    if (GUILayout.Button("Previous Point"))
+                    {
+                        if (currentTime > currentPoint.time)
+                        {
+                            ChangePoint(points.IndexOf(currentPoint));
+                        }
+                        else
+                        {
+                            ChangePoint(points.IndexOf(currentPoint) - 1);
+                        }
+                    }
+                    if (GUILayout.Button("Next Point"))
+                    {
+                        ChangePoint(points.IndexOf(currentPoint) + 1);
+                    }
+                    EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.BeginHorizontal();
+                    if (GUILayout.Button("Delete Point"))
+                    {
+                        int previousIndex = points.IndexOf(currentPoint) - 1;
+                        if (previousIndex < 0)
+                        {
+                            previousIndex = 0;
+                        }
+                        points.Remove(currentPoint);
+                        ChangePoint(previousIndex);
+                    }
+                    if (GUILayout.Button("Clear Points"))
+                    {
+                        points = new List<Point>();
+                        ChangePoint(0);
                     }
                     EditorGUILayout.EndHorizontal();
                     for (int i = 0; i < tilesRows; i++)
@@ -185,20 +254,38 @@ public class MapMakerWindow : EditorWindow
                     {
                         SaveMap();
                     }
-                    if (GUILayout.Button("Load"))
-                    {
-                        LoadMap();
-                    }
                     EditorGUILayout.EndHorizontal();
                 }
             }
+            if (GUILayout.Button("Load Map"))
+            {
+                LoadMap();
+            }
         }
+    }
+
+    void ChangePoint(object indexInList)
+    {
+        ChangePoint((int)indexInList);
+    }
+
+    void ChangePoint(int indexInList)
+    {
+        if(points.Count == 0)
+        {
+            return;
+        }
+        indexInList = Mathf.Clamp(indexInList, 0, points.Count - 1);
+        currentPoint = points[indexInList];
+        currentTime = currentPoint.time;
+        audioSource.time = currentTime;
     }
 
     void AddPoint(int tileIndex)
     {
         Point newPoint = new Point(currentTime, tileIndex);
         points.Add(newPoint);
+        points.Sort();
     }
 
     void SaveMap()
@@ -222,6 +309,23 @@ public class MapMakerWindow : EditorWindow
 
     void LoadMap()
     {
-        //TODO Load Map
+        if(Selection.assetGUIDs.Length == 1)
+        {
+            string mapGUID = Selection.assetGUIDs[0];
+            map = AssetDatabase.LoadAssetAtPath<PadTap.Map>(AssetDatabase.GUIDToAssetPath(mapGUID));
+
+            threshold = map.threshold;
+            song = map.song;
+            tilesColumns = map.tilesColumns;
+            tilesRows = map.tilesRows;
+            indicatorLifespan = map.indicatorLifespan;
+            copyright = map.copyright;
+            songName = map.songName;
+            points = new List<Point>();
+            foreach (PadTap.Map.Point point in map.points)
+            {
+                points.Add(new Point(point.time, point.tileIndex));
+            }
+        }
     }
 }
