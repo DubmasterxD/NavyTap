@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace PadTap
@@ -15,8 +16,8 @@ namespace PadTap
         public string songName = "";
         public string copyright = "";
 
-        [System.Serializable]
-        public class Point
+        [Serializable]
+        public class Point : IComparable
         {
             public float time = 0f;
             public int tileIndex = 0;
@@ -25,6 +26,19 @@ namespace PadTap
             {
                 this.time = time;
                 this.tileIndex = tileIndex;
+            }
+
+            public int CompareTo(object obj)
+            {
+                Point point = (Point)obj;
+                if (point.time > time)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 1;
+                }
             }
         }
     }

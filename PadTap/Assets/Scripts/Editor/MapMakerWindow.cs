@@ -1,50 +1,20 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
-using System;
 
 public class MapMakerWindow : EditorWindow
 {
     PadTap.Map map = null;
-    AudioClip song;
+    PadTap.Map.Point currentPoint = null;
+    AudioSource audioSource = null;
     float currentTime = 0;
-    AudioSource audioSource;
-    string songName = "";
-    string copyright = "";
-    int tilesRows = 4;
-    int tilesColumns = 4;
-    [Range(0, 1)] float threshold = .8f;
-    [Range(0, 5)] float indicatorLifespan = 2;
-    List<Point> points = new List<Point>();
-    static Vector2 windowSize = new Vector2(400, 600);
     float deltaTime = 1;
     bool canCreate = false;
-    Point currentPoint = null;
+    static Vector2 windowSize = new Vector2(400, 600);
 
-    GUISkin skin;
-
-    [System.Serializable]
-    public class Point : IComparable
-    {
-        public float time = 0f;
-        public int tileIndex = 0;
-
-        public Point(float time, int tileIndex)
-        {
-            this.time = time;
-            this.tileIndex = tileIndex;
-        }
-
-        public int CompareTo(object obj)
-        {
-            Point p = (Point)obj;
-            if (p.time > time)
-            {
-                return -1;
-            }
-            return 1;
-        }
-    }
+    GUISkin skin = null;
+    string skinsPath = "";
+    string skinName = "Test";
 
     [MenuItem("Window/Map Maker")]
     static void OpenWindow()
@@ -65,66 +35,77 @@ public class MapMakerWindow : EditorWindow
 
     private void OnEnable()
     {
-        skin = Resources.Load<GUISkin>("Test");
-    }
-
-    private void OnGUI()
-    {
+        if (skin == null)
+        {
+            skin = Resources.Load<GUISkin>(skinsPath + skinName);
+            if (skin == null)
+            {
+                Debug.LogError("Invalid skin path or name!");
+                skin = CreateInstance<GUISkin>();
+            }
+        }
+        if (map == null)
+        {
+            CreateNewMap();
+        }
         if (audioSource == null)
         {
             audioSource = FindObjectOfType<AudioSource>();
         }
-        else
+    }
+
+    private void OnGUI()
+    {
+        if (audioSource != null)
         {
-            songName = EditorGUILayout.TextField("Song Name", songName);
             if (audioSource.isPlaying)
             {
                 currentTime = audioSource.time;
             }
-            AudioClip previousSong = song;
-            song = (AudioClip)EditorGUILayout.ObjectField("Song", song, typeof(AudioClip), false);
-            if (previousSong != song)
+            AudioClip previousSong = map.song;
+            map.song = (AudioClip)EditorGUILayout.ObjectField("Song", map.song, typeof(AudioClip), false);
+            if (previousSong != map.song)
             {
                 canCreate = false;
-                copyright = "";
-                tilesRows = 4;
-                tilesColumns = 4;
+                map.copyright = "";
+                map.tilesRows = 4;
+                map.tilesColumns = 4;
                 audioSource.time = 0;
                 currentTime = 0;
-                songName = "";
+                map.songName = "";
                 deltaTime = 1;
-                threshold = .8f;
-                indicatorLifespan = 2;
-                points = new List<Point>();
+                map.threshold = .8f;
+                map.indicatorLifespan = 2;
+                map.points = new List<PadTap.Map.Point>();
             }
-            if (song != null)
+            if (map.song != null)
             {
                 if (!canCreate)
                 {
                     EditorGUILayout.LabelField("Copyright:");
-                    copyright = EditorGUILayout.TextArea(copyright);
-                    if (copyright == "")
+                    map.copyright = EditorGUILayout.TextArea(map.copyright);
+                    if (map.copyright == "")
                     {
                         EditorGUILayout.HelpBox("Valid copyright informations are necessary!", MessageType.Warning);
                     }
                     else if (GUILayout.Button("Begin Creating"))
                     {
                         canCreate = true;
-                        map = new PadTap.Map();
                     }
                 }
                 else
                 {
-                    threshold = Mathf.Clamp01(EditorGUILayout.FloatField("Threshold", threshold));
-                    indicatorLifespan = Mathf.Clamp(EditorGUILayout.FloatField("Indicator Lifespan", indicatorLifespan), 0, 10);
-                    tilesRows = Mathf.Clamp(EditorGUILayout.IntField("Rows", tilesRows), 1, 6);
-                    tilesColumns = Mathf.Clamp(EditorGUILayout.IntField("Columns", tilesColumns), 1, 6);
+                    map.songName = EditorGUILayout.TextField("Song Name", map.songName);
+                    map.threshold = EditorGUILayout.Slider("Threshold", map.threshold, 0, 1);
+                    map.indicatorLifespan = EditorGUILayout.Slider("Indicator Lifespan", map.indicatorLifespan, 0, 10);
+                    map.tilesRows = EditorGUILayout.IntSlider("Rows", map.tilesRows, 1, 6);
+                    map.tilesColumns = EditorGUILayout.IntSlider("Columns", map.tilesColumns, 1, 6);
                     EditorGUILayout.BeginHorizontal();
                     if (GUILayout.Button("Play"))
                     {
                         if (!audioSource.isPlaying)
                         {
-                            audioSource.clip = song;
+                            audioSource.clip = map.song;
                             audioSource.time = currentTime;
                             audioSource.Play();
                         }
@@ -135,13 +116,12 @@ public class MapMakerWindow : EditorWindow
                         audioSource.Stop();
                     }
                     EditorGUILayout.EndHorizontal();
-                    if (currentTime > song.length)
+                    if (currentTime > map.song.length)
                     {
                         currentTime = Mathf.Floor((currentTime - 0.01f) * 100) / 100;
                     }
                     currentTime = Mathf.Round(currentTime * 100) / 100;
-                    currentTime = EditorGUILayout.Slider(currentTime, 0, song.length);
-                    //EditorGUI.ProgressBar(new Rect(7, 36, 432, 18), currentTime / song.length, "asa");
+                    currentTime = EditorGUILayout.Slider(currentTime, 0, map.song.length);
                     EditorGUILayout.BeginHorizontal();
                     if (GUILayout.Button("Back"))
                     {
@@ -158,9 +138,9 @@ public class MapMakerWindow : EditorWindow
                     if (GUILayout.Button("Front"))
                     {
                         currentTime += deltaTime;
-                        if (currentTime > song.length)
+                        if (currentTime > map.song.length)
                         {
-                            audioSource.time = song.length - 0.001f;
+                            audioSource.time = map.song.length - 0.001f;
                         }
                         else
                         {
@@ -171,10 +151,10 @@ public class MapMakerWindow : EditorWindow
                     deltaTime = Mathf.Round(deltaTime * 100) / 100;
                     EditorGUILayout.EndHorizontal();
                     Rect a = EditorGUILayout.BeginHorizontal();
-                    if (points.Count > 0)
+                    if (map.points.Count > 0)
                     {
-                        currentPoint = points[0];
-                        foreach (Point point in points)
+                        currentPoint = map.points[0];
+                        foreach (PadTap.Map.Point point in map.points)
                         {
                             if (point.time <= currentTime)
                             {
@@ -183,17 +163,17 @@ public class MapMakerWindow : EditorWindow
                         }
                     }
                     string chosen = "-";
-                    if (points.Count !=0)
+                    if (map.points.Count != 0)
                     {
                         chosen = currentPoint.time.ToString();
                     }
                     if (EditorGUILayout.DropdownButton(new GUIContent(chosen), FocusType.Keyboard))
                     {
                         GenericMenu menu = new GenericMenu();
-                        GenericMenu.MenuFunction2 func = ChangePoint;
-                        for(int i=0; i < points.Count; i++)
+                        GenericMenu.MenuFunction2 func = ChangeCurrentPoint;
+                        for (int i = 0; i < map.points.Count; i++)
                         {
-                            menu.AddItem(new GUIContent(points[i].time.ToString()), points[i].time == currentPoint.time, func, i);
+                            menu.AddItem(new GUIContent(map.points[i].time.ToString()), map.points[i].time == currentPoint.time, func, i);
                         }
                         menu.DropDown(a);
                     }
@@ -201,52 +181,52 @@ public class MapMakerWindow : EditorWindow
                     {
                         if (currentTime > currentPoint.time)
                         {
-                            ChangePoint(points.IndexOf(currentPoint));
+                            ChangeCurrentPoint(map.points.IndexOf(currentPoint));
                         }
                         else
                         {
-                            ChangePoint(points.IndexOf(currentPoint) - 1);
+                            ChangeCurrentPoint(map.points.IndexOf(currentPoint) - 1);
                         }
                     }
                     if (GUILayout.Button("Next Point"))
                     {
-                        ChangePoint(points.IndexOf(currentPoint) + 1);
+                        ChangeCurrentPoint(map.points.IndexOf(currentPoint) + 1);
                     }
                     EditorGUILayout.EndHorizontal();
                     EditorGUILayout.BeginHorizontal();
                     if (GUILayout.Button("Delete Point"))
                     {
-                        int previousIndex = points.IndexOf(currentPoint) - 1;
+                        int previousIndex = map.points.IndexOf(currentPoint) - 1;
                         if (previousIndex < 0)
                         {
                             previousIndex = 0;
                         }
-                        points.Remove(currentPoint);
-                        ChangePoint(previousIndex);
+                        map.points.Remove(currentPoint);
+                        ChangeCurrentPoint(previousIndex);
                     }
                     if (GUILayout.Button("Clear Points"))
                     {
-                        points = new List<Point>();
-                        ChangePoint(0);
+                        map.points = new List<PadTap.Map.Point>();
+                        ChangeCurrentPoint(0);
                     }
                     EditorGUILayout.EndHorizontal();
-                    for (int i = 0; i < tilesRows; i++)
+                    for (int i = 0; i < map.tilesRows; i++)
                     {
                         GUIStyle center = skin.GetStyle("Center");
                         GUIStyle tileButton = skin.button;
-                        center.padding.left = (int)((windowSize.x - tilesColumns * (tileButton.fixedWidth + tileButton.margin.left)) / 2);
+                        center.padding.left = (int)((windowSize.x - map.tilesColumns * (tileButton.fixedWidth + tileButton.margin.left)) / 2);
                         EditorGUILayout.BeginHorizontal(center);
-                        for (int j = 0; j < tilesColumns; j++)
+                        for (int j = 0; j < map.tilesColumns; j++)
                         {
-                            if (GUILayout.Button((i * tilesColumns + j).ToString(), skin.button))
+                            if (GUILayout.Button((i * map.tilesColumns + j).ToString(), skin.button))
                             {
-                                AddPoint(i * tilesColumns + j);
+                                AddPoint(i * map.tilesColumns + j);
                             }
                         }
                         EditorGUILayout.EndHorizontal();
                     }
                     EditorGUILayout.BeginHorizontal();
-                    if (songName == "")
+                    if (map.songName == "")
                     {
                         EditorGUILayout.HelpBox("Song Name required!", MessageType.Warning);
                     }
@@ -257,74 +237,116 @@ public class MapMakerWindow : EditorWindow
                     EditorGUILayout.EndHorizontal();
                 }
             }
-            if (GUILayout.Button("Load Map"))
+            if (GUILayout.Button("Load Selected Map"))
             {
                 LoadMap();
             }
         }
     }
 
-    void ChangePoint(object indexInList)
+    void CreateNewMap()
     {
-        ChangePoint((int)indexInList);
-    }
-
-    void ChangePoint(int indexInList)
-    {
-        if(points.Count == 0)
-        {
-            return;
-        }
-        indexInList = Mathf.Clamp(indexInList, 0, points.Count - 1);
-        currentPoint = points[indexInList];
-        currentTime = currentPoint.time;
-        audioSource.time = currentTime;
+        map = CreateInstance<PadTap.Map>();
     }
 
     void AddPoint(int tileIndex)
     {
-        Point newPoint = new Point(currentTime, tileIndex);
-        points.Add(newPoint);
-        points.Sort();
+        if (map.points == null)
+        {
+            map.points = new List<PadTap.Map.Point>();
+        }
+        foreach (PadTap.Map.Point point in map.points)
+        {
+            if (point.time == currentTime)
+            {
+                return;
+            }
+        }
+        PadTap.Map.Point newPoint = new PadTap.Map.Point(currentTime, tileIndex);
+        map.points.Add(newPoint);
+        map.points.Sort();
+    }
+
+    void ChangeCurrentPoint(object indexInList)
+    {
+        int index = 0;
+        try
+        {
+            index = (int)indexInList;
+            ChangeCurrentPoint(index);
+        }
+        catch (System.Exception)
+        {
+            throw;
+        }
+    }
+
+    void ChangeCurrentPoint(int indexInList)
+    {
+        if (map.points.Count != 0)
+        {
+            indexInList = Mathf.Clamp(indexInList, 0, map.points.Count - 1);
+            currentPoint = map.points[indexInList];
+            ChangeCurrentTime(currentPoint.time);
+        }
+    }
+
+    void ChangeCurrentTime(float time)
+    {
+        time = Mathf.Clamp(time, 0, map.song.length);
+        currentTime = time;
+        audioSource.time = time;
     }
 
     void SaveMap()
     {
-        map = CreateInstance<PadTap.Map>();
-        map.points = new List<PadTap.Map.Point>();
-        map.threshold = threshold;
-        map.song = song;
-        map.tilesColumns = tilesColumns;
-        map.tilesRows = tilesRows;
-        map.indicatorLifespan = indicatorLifespan;
-        map.copyright = copyright;
-        map.songName = songName;
-        foreach(Point point in points)
+        if (!string.IsNullOrEmpty(map.songName))
         {
-            map.points.Add(new PadTap.Map.Point(point.time, point.tileIndex));
+            string path = "Assets/Maps/" + map.songName + ".asset";
+            AssetDatabase.CreateAsset(map, path);
+            CreateMapCopy();
         }
-        string path = "Assets/Maps/" + songName + ".asset";
-        AssetDatabase.CreateAsset(map, path);
+    }
+
+    void CreateMapCopy()
+    {
+        if (map != null)
+        {
+            PadTap.Map newInstance = CreateInstance<PadTap.Map>();
+            newInstance.copyright = map.copyright;
+            newInstance.indicatorLifespan = map.indicatorLifespan;
+            newInstance.song = map.song;
+            newInstance.songName = map.songName;
+            newInstance.threshold = map.threshold;
+            newInstance.tilesColumns = map.tilesColumns;
+            newInstance.tilesRows = map.tilesRows;
+            newInstance.points = new List<PadTap.Map.Point>();
+            foreach(PadTap.Map.Point point in map.points)
+            {
+                newInstance.points.Add(new PadTap.Map.Point(point.time, point.tileIndex));
+            }
+            map = newInstance;
+        }
+        else
+        {
+            CreateNewMap();
+        }
     }
 
     void LoadMap()
     {
-        if(Selection.assetGUIDs.Length == 1)
+        if (Selection.assetGUIDs.Length == 1)
         {
             string mapGUID = Selection.assetGUIDs[0];
             map = AssetDatabase.LoadAssetAtPath<PadTap.Map>(AssetDatabase.GUIDToAssetPath(mapGUID));
-
-            threshold = map.threshold;
-            song = map.song;
-            tilesColumns = map.tilesColumns;
-            tilesRows = map.tilesRows;
-            indicatorLifespan = map.indicatorLifespan;
-            copyright = map.copyright;
-            songName = map.songName;
-            points = new List<Point>();
-            foreach (PadTap.Map.Point point in map.points)
+            if (map == null)
             {
-                points.Add(new Point(point.time, point.tileIndex));
+                CreateNewMap();
+            }
+            else
+            {
+                canCreate = true;
+                CreateMapCopy();
             }
         }
     }
