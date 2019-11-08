@@ -7,7 +7,6 @@ public class MapMakerWindow : EditorWindow
     PadTap.Map map = null;
     PadTap.Map.Point currentPoint = null;
     AudioSource audioSource = null;
-    float currentTime = 0;
     float deltaTime = 1;
     bool canCreate = false;
     static Vector2 windowSize = new Vector2(400, 600);
@@ -58,10 +57,6 @@ public class MapMakerWindow : EditorWindow
     {
         if (audioSource != null)
         {
-            if (audioSource.isPlaying)
-            {
-                currentTime = audioSource.time;
-            }
             AudioClip previousSong = map.song;
             map.song = (AudioClip)EditorGUILayout.ObjectField("Song", map.song, typeof(AudioClip), false);
             if (previousSong != map.song)
@@ -71,7 +66,6 @@ public class MapMakerWindow : EditorWindow
                 map.tilesRows = 4;
                 map.tilesColumns = 4;
                 audioSource.time = 0;
-                currentTime = 0;
                 map.songName = "";
                 deltaTime = 1;
                 map.threshold = .8f;
@@ -101,50 +95,40 @@ public class MapMakerWindow : EditorWindow
                     map.tilesRows = EditorGUILayout.IntSlider("Rows", map.tilesRows, 1, 6);
                     map.tilesColumns = EditorGUILayout.IntSlider("Columns", map.tilesColumns, 1, 6);
                     EditorGUILayout.BeginHorizontal();
+                    if (!audioSource.isPlaying)
+                    {
+                        audioSource.Play();
+                        audioSource.Pause();
+                    }
                     if (GUILayout.Button("Play"))
                     {
                         if (!audioSource.isPlaying)
                         {
-                            audioSource.clip = map.song;
-                            audioSource.time = currentTime;
+                    audioSource.clip = map.song;
                             audioSource.Play();
                         }
                     }
                     if (GUILayout.Button("Stop"))
                     {
-                        currentTime = audioSource.time;
-                        audioSource.Stop();
+                        audioSource.Pause();
                     }
                     EditorGUILayout.EndHorizontal();
-                    if (currentTime > map.song.length)
-                    {
-                        currentTime = Mathf.Floor((currentTime - 0.01f) * 100) / 100;
-                    }
-                    currentTime = Mathf.Round(currentTime * 100) / 100;
-                    currentTime = EditorGUILayout.Slider(currentTime, 0, map.song.length);
+                    audioSource.time = EditorGUILayout.Slider(audioSource.time, 0, map.song.length);
                     EditorGUILayout.BeginHorizontal();
                     if (GUILayout.Button("Back"))
                     {
-                        currentTime -= deltaTime;
-                        if (currentTime < 0)
+                        audioSource.time -= deltaTime;
+                        if (audioSource.time < 0)
                         {
                             audioSource.time = 0;
-                        }
-                        else
-                        {
-                            audioSource.time = currentTime;
                         }
                     }
                     if (GUILayout.Button("Front"))
                     {
-                        currentTime += deltaTime;
-                        if (currentTime > map.song.length)
+                        audioSource.time += deltaTime;
+                        if (audioSource.time > map.song.length)
                         {
-                            audioSource.time = map.song.length - 0.001f;
-                        }
-                        else
-                        {
-                            audioSource.time = currentTime;
+                            audioSource.time = map.song.length;
                         }
                     }
                     deltaTime = EditorGUILayout.FloatField("Delta Time", deltaTime);
@@ -156,7 +140,7 @@ public class MapMakerWindow : EditorWindow
                         currentPoint = map.points[0];
                         foreach (PadTap.Map.Point point in map.points)
                         {
-                            if (point.time <= currentTime)
+                            if (point.time <= audioSource.time)
                             {
                                 currentPoint = point;
                             }
@@ -169,17 +153,13 @@ public class MapMakerWindow : EditorWindow
                     }
                     if (EditorGUILayout.DropdownButton(new GUIContent(chosen), FocusType.Keyboard))
                     {
-                        GenericMenu menu = new GenericMenu();
-                        GenericMenu.MenuFunction2 func = ChangeCurrentPoint;
-                        for (int i = 0; i < map.points.Count; i++)
-                        {
-                            menu.AddItem(new GUIContent(map.points[i].time.ToString()), map.points[i].time == currentPoint.time, func, i);
-                        }
-                        menu.DropDown(a);
+                        PointChoicePopup menu = new PointChoicePopup();
+                        menu.Initialization(this, map.points, currentPoint);
+                        PopupWindow.Show(a, menu);
                     }
                     if (GUILayout.Button("Previous Point"))
                     {
-                        if (currentTime > currentPoint.time)
+                        if (audioSource.time > currentPoint.time)
                         {
                             ChangeCurrentPoint(map.points.IndexOf(currentPoint));
                         }
@@ -257,28 +237,14 @@ public class MapMakerWindow : EditorWindow
         }
         foreach (PadTap.Map.Point point in map.points)
         {
-            if (point.time == currentTime)
+            if (point.time == audioSource.time)
             {
                 return;
             }
         }
-        PadTap.Map.Point newPoint = new PadTap.Map.Point(currentTime, tileIndex);
+        PadTap.Map.Point newPoint = new PadTap.Map.Point(audioSource.time, tileIndex);
         map.points.Add(newPoint);
         map.points.Sort();
-    }
-
-    void ChangeCurrentPoint(object indexInList)
-    {
-        int index = 0;
-        try
-        {
-            index = (int)indexInList;
-            ChangeCurrentPoint(index);
-        }
-        catch (System.Exception)
-        {
-            throw;
-        }
     }
 
     void ChangeCurrentPoint(int indexInList)
@@ -294,7 +260,6 @@ public class MapMakerWindow : EditorWindow
     void ChangeCurrentTime(float time)
     {
         time = Mathf.Clamp(time, 0, map.song.length);
-        currentTime = time;
         audioSource.time = time;
     }
 
@@ -321,7 +286,7 @@ public class MapMakerWindow : EditorWindow
             newInstance.tilesColumns = map.tilesColumns;
             newInstance.tilesRows = map.tilesRows;
             newInstance.points = new List<PadTap.Map.Point>();
-            foreach(PadTap.Map.Point point in map.points)
+            foreach (PadTap.Map.Point point in map.points)
             {
                 newInstance.points.Add(new PadTap.Map.Point(point.time, point.tileIndex));
             }
@@ -348,6 +313,52 @@ public class MapMakerWindow : EditorWindow
                 canCreate = true;
                 CreateMapCopy();
             }
+        }
+    }
+
+    public class PointChoicePopup : PopupWindowContent
+    {
+        MapMakerWindow parent;
+
+        List<PadTap.Map.Point> points;
+        PadTap.Map.Point currentPoint;
+
+        Vector2 scrollPosition = Vector2.zero;
+
+        public override void OnGUI(Rect rect)
+        {
+            editorWindow.minSize = new Vector2(150, 0);
+            editorWindow.maxSize = new Vector2(150, 300);
+            DrawDropdown();
+        }
+
+        private void DrawDropdown()
+        {
+            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.Width(150));
+            for (int i = 0; i < points.Count; i++)
+            {
+                if (EditorGUILayout.ToggleLeft(points[i].time.ToString(), points[i].time == currentPoint.time, GUILayout.Width(100)))
+                {
+                    SelectPoint(i);
+                }
+            }
+            EditorGUILayout.EndScrollView();
+        }
+
+        private void SelectPoint(int index)
+        {
+            if (points[index].time != currentPoint.time)
+            {
+                parent.ChangeCurrentPoint(index);
+                editorWindow.Close();
+            }
+        }
+
+        public void Initialization(MapMakerWindow newParent, List<PadTap.Map.Point> newPoints, PadTap.Map.Point newCurrentPoint)
+        {
+            parent = newParent;
+            points = newPoints;
+            currentPoint = newCurrentPoint;
         }
     }
 }
