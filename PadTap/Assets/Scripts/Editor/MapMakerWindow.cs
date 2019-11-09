@@ -4,25 +4,26 @@ using System.Collections.Generic;
 
 public class MapMakerWindow : EditorWindow
 {
-    PadTap.Map map = null;
-    PadTap.Map.Point currentPoint = null;
-    AudioSource audioSource = null;
-    float deltaTime = 1;
-    bool canCreate = false;
-    static Vector2 windowSize = new Vector2(400, 600);
-
-    GUISkin skin = null;
-    string skinsPath = "";
-    string skinName = "Test";
+    private static Vector2 windowSize = new Vector2(400, 600);
 
     [MenuItem("Window/Map Maker")]
-    static void OpenWindow()
+    private static void OpenWindow()
     {
         MapMakerWindow window = GetWindow<MapMakerWindow>("Map Maker");
         window.minSize = windowSize;
         window.maxSize = windowSize;
         window.Show();
     }
+
+    private PadTap.Map map = null;
+    private PadTap.Map.Point currentPoint = null;
+    private AudioSource audioSource = null;
+    private float deltaTime = 1;
+    private bool givenCopyright = false;
+
+    private GUISkin skin = null;
+    private string skinsPath = "";
+    private string skinName = "Test";
 
     private void Update()
     {
@@ -47,189 +48,288 @@ public class MapMakerWindow : EditorWindow
         {
             CreateNewMap();
         }
-        if (audioSource == null)
-        {
-            audioSource = FindObjectOfType<AudioSource>();
-        }
     }
 
     private void OnGUI()
     {
+        CheckForAudioSource();
         if (audioSource != null)
         {
-            AudioClip previousSong = map.song;
-            map.song = (AudioClip)EditorGUILayout.ObjectField("Song", map.song, typeof(AudioClip), false);
-            if (previousSong != map.song)
-            {
-                canCreate = false;
-                map.copyright = "";
-                map.tilesRows = 4;
-                map.tilesColumns = 4;
-                audioSource.time = 0;
-                map.songName = "";
-                deltaTime = 1;
-                map.threshold = .8f;
-                map.indicatorLifespan = 2;
-                map.points = new List<PadTap.Map.Point>();
-            }
+            DrawSongSelection();
             if (map.song != null)
             {
-                if (!canCreate)
+                if (!givenCopyright)
                 {
-                    EditorGUILayout.LabelField("Copyright:");
-                    map.copyright = EditorGUILayout.TextArea(map.copyright);
-                    if (map.copyright == "")
-                    {
-                        EditorGUILayout.HelpBox("Valid copyright informations are necessary!", MessageType.Warning);
-                    }
-                    else if (GUILayout.Button("Begin Creating"))
-                    {
-                        canCreate = true;
-                    }
+                    DrawCopyright();
                 }
                 else
                 {
-                    map.songName = EditorGUILayout.TextField("Song Name", map.songName);
-                    map.threshold = EditorGUILayout.Slider("Threshold", map.threshold, 0, 1);
-                    map.indicatorLifespan = EditorGUILayout.Slider("Indicator Lifespan", map.indicatorLifespan, 0, 10);
-                    map.tilesRows = EditorGUILayout.IntSlider("Rows", map.tilesRows, 1, 6);
-                    map.tilesColumns = EditorGUILayout.IntSlider("Columns", map.tilesColumns, 1, 6);
-                    EditorGUILayout.BeginHorizontal();
-                    if (!audioSource.isPlaying)
-                    {
-                        audioSource.Play();
-                        audioSource.Pause();
-                    }
-                    if (GUILayout.Button("Play"))
-                    {
-                        if (!audioSource.isPlaying)
-                        {
-                    audioSource.clip = map.song;
-                            audioSource.Play();
-                        }
-                    }
-                    if (GUILayout.Button("Stop"))
-                    {
-                        audioSource.Pause();
-                    }
-                    EditorGUILayout.EndHorizontal();
-                    audioSource.time = EditorGUILayout.Slider(audioSource.time, 0, map.song.length);
-                    EditorGUILayout.BeginHorizontal();
-                    if (GUILayout.Button("Back"))
-                    {
-                        audioSource.time -= deltaTime;
-                        if (audioSource.time < 0)
-                        {
-                            audioSource.time = 0;
-                        }
-                    }
-                    if (GUILayout.Button("Front"))
-                    {
-                        audioSource.time += deltaTime;
-                        if (audioSource.time > map.song.length)
-                        {
-                            audioSource.time = map.song.length;
-                        }
-                    }
-                    deltaTime = EditorGUILayout.FloatField("Delta Time", deltaTime);
-                    deltaTime = Mathf.Round(deltaTime * 100) / 100;
-                    EditorGUILayout.EndHorizontal();
-                    Rect a = EditorGUILayout.BeginHorizontal();
-                    if (map.points.Count > 0)
-                    {
-                        currentPoint = map.points[0];
-                        foreach (PadTap.Map.Point point in map.points)
-                        {
-                            if (point.time <= audioSource.time)
-                            {
-                                currentPoint = point;
-                            }
-                        }
-                    }
-                    string chosen = "-";
-                    if (map.points.Count != 0)
-                    {
-                        chosen = currentPoint.time.ToString();
-                    }
-                    if (EditorGUILayout.DropdownButton(new GUIContent(chosen), FocusType.Keyboard))
-                    {
-                        PointChoicePopup menu = new PointChoicePopup();
-                        menu.Initialization(this, map.points, currentPoint);
-                        PopupWindow.Show(a, menu);
-                    }
-                    if (GUILayout.Button("Previous Point"))
-                    {
-                        if (audioSource.time > currentPoint.time)
-                        {
-                            ChangeCurrentPoint(map.points.IndexOf(currentPoint));
-                        }
-                        else
-                        {
-                            ChangeCurrentPoint(map.points.IndexOf(currentPoint) - 1);
-                        }
-                    }
-                    if (GUILayout.Button("Next Point"))
-                    {
-                        ChangeCurrentPoint(map.points.IndexOf(currentPoint) + 1);
-                    }
-                    EditorGUILayout.EndHorizontal();
-                    EditorGUILayout.BeginHorizontal();
-                    if (GUILayout.Button("Delete Point"))
-                    {
-                        int previousIndex = map.points.IndexOf(currentPoint) - 1;
-                        if (previousIndex < 0)
-                        {
-                            previousIndex = 0;
-                        }
-                        map.points.Remove(currentPoint);
-                        ChangeCurrentPoint(previousIndex);
-                    }
-                    if (GUILayout.Button("Clear Points"))
-                    {
-                        map.points = new List<PadTap.Map.Point>();
-                        ChangeCurrentPoint(0);
-                    }
-                    EditorGUILayout.EndHorizontal();
-                    for (int i = 0; i < map.tilesRows; i++)
-                    {
-                        GUIStyle center = skin.GetStyle("Center");
-                        GUIStyle tileButton = skin.button;
-                        center.padding.left = (int)((windowSize.x - map.tilesColumns * (tileButton.fixedWidth + tileButton.margin.left)) / 2);
-                        EditorGUILayout.BeginHorizontal(center);
-                        for (int j = 0; j < map.tilesColumns; j++)
-                        {
-                            if (GUILayout.Button((i * map.tilesColumns + j).ToString(), skin.button))
-                            {
-                                AddPoint(i * map.tilesColumns + j);
-                            }
-                        }
-                        EditorGUILayout.EndHorizontal();
-                    }
-                    EditorGUILayout.BeginHorizontal();
-                    if (map.songName == "")
-                    {
-                        EditorGUILayout.HelpBox("Song Name required!", MessageType.Warning);
-                    }
-                    else if (GUILayout.Button("Save"))
-                    {
-                        SaveMap();
-                    }
-                    EditorGUILayout.EndHorizontal();
+                    DrawMapSettings();
+                    DrawMusicPlayer();
+                    DrawPointsManager();
+                    DrawTiles();
+                    DrawMapSave();
                 }
             }
-            if (GUILayout.Button("Load Selected Map"))
+            DrawMapLoad();
+        }
+    }
+
+    private void CheckForAudioSource()
+    {
+        if (audioSource == null)
+        {
+            audioSource = FindObjectOfType<AudioSource>();
+            if (audioSource == null)
             {
-                LoadMap();
+                Debug.LogError("No AudioSource found!");
             }
         }
     }
 
-    void CreateNewMap()
+    private void DrawSongSelection()
+    {
+        AudioClip previousSong = map.song;
+        map.song = (AudioClip)EditorGUILayout.ObjectField("Song", map.song, typeof(AudioClip), false);
+        if (previousSong != map.song)
+        {
+            Reset();
+        }
+    }
+
+    private void DrawCopyright()
+    {
+        EditorGUILayout.LabelField("Copyright:");
+        map.copyright = EditorGUILayout.TextArea(map.copyright);
+        if (map.copyright == "")
+        {
+            EditorGUILayout.HelpBox("Valid copyright informations are necessary!", MessageType.Warning);
+        }
+        else if (GUILayout.Button("Begin Creating"))
+        {
+            givenCopyright = true;
+        }
+    }
+
+    private void DrawMapSettings()
+    {
+        map.songName = EditorGUILayout.TextField("Song Name", map.songName);
+        map.threshold = EditorGUILayout.Slider("Threshold", map.threshold, 0, 1);
+        map.indicatorLifespan = EditorGUILayout.Slider("Indicator Lifespan", map.indicatorLifespan, 0, 10);
+        map.tilesRows = EditorGUILayout.IntSlider("Rows", map.tilesRows, 1, 6);
+        map.tilesColumns = EditorGUILayout.IntSlider("Columns", map.tilesColumns, 1, 6);
+    }
+
+    private void DrawMusicPlayer()
+    {
+        EditorGUILayout.BeginHorizontal();
+        MakeSureAudioSourceDoesntReset();
+        if (GUILayout.Button("Play"))
+        {
+            Play();
+        }
+        if (GUILayout.Button("Pause"))
+        {
+            Pause();
+        }
+        EditorGUILayout.EndHorizontal();
+        audioSource.time = EditorGUILayout.Slider(audioSource.time, 0, map.song.length);
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Back"))
+        {
+            MoveTime(-deltaTime);
+        }
+        if (GUILayout.Button("Front"))
+        {
+            MoveTime(deltaTime);
+        }
+        deltaTime = EditorGUILayout.FloatField("Delta Time", deltaTime);
+        EditorGUILayout.EndHorizontal();
+    }
+
+    private void DrawPointsManager()
+    {
+        Rect a = EditorGUILayout.BeginHorizontal();
+        if (map.points.Count > 0)
+        {
+            currentPoint = map.points[0];
+            foreach (PadTap.Map.Point point in map.points)
+            {
+                if (point.time <= audioSource.time)
+                {
+                    currentPoint = point;
+                }
+            }
+        }
+        string chosen = "-";
+        if (map.points.Count != 0)
+        {
+            chosen = currentPoint.time.ToString();
+        }
+        if (EditorGUILayout.DropdownButton(new GUIContent(chosen), FocusType.Keyboard))
+        {
+            PointChoicePopup menu = new PointChoicePopup();
+            menu.Initialization(this, map.points, currentPoint);
+            PopupWindow.Show(a, menu);
+        }
+        if (GUILayout.Button("Previous Point"))
+        {
+            if (audioSource.time > currentPoint.time)
+            {
+                ChangeCurrentPoint(map.points.IndexOf(currentPoint));
+            }
+            else
+            {
+                ChangeCurrentPoint(map.points.IndexOf(currentPoint) - 1);
+            }
+        }
+        if (GUILayout.Button("Next Point"))
+        {
+            ChangeCurrentPoint(map.points.IndexOf(currentPoint) + 1);
+        }
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Delete Point"))
+        {
+            int previousIndex = map.points.IndexOf(currentPoint) - 1;
+            if (previousIndex < 0)
+            {
+                previousIndex = 0;
+            }
+            map.points.Remove(currentPoint);
+            ChangeCurrentPoint(previousIndex);
+        }
+        if (GUILayout.Button("Clear Points"))
+        {
+            map.points = new List<PadTap.Map.Point>();
+            ChangeCurrentPoint(0);
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+
+    private void DrawTiles()
+    {
+        for (int i = 0; i < map.tilesRows; i++)
+        {
+            EditorGUILayout.BeginHorizontal(TilesHorizontalCenter());
+            for (int j = 0; j < map.tilesColumns; j++)
+            {
+                if (GUILayout.Button(GetTileIndex(i, j).ToString(), skin.button))
+                {
+                    AddPoint(GetTileIndex(i, j));
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+        }
+    }
+
+    private void DrawMapSave()
+    {
+        EditorGUILayout.BeginHorizontal();
+        if (map.songName == "")
+        {
+            EditorGUILayout.HelpBox("Song Name required!", MessageType.Warning);
+        }
+        else if (GUILayout.Button("Save"))
+        {
+            SaveMap();
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+
+    private void DrawMapLoad()
+    {
+        if (GUILayout.Button("Load Selected Map"))
+        {
+            LoadMap();
+        }
+    }
+
+    private void CreateNewMap()
     {
         map = CreateInstance<PadTap.Map>();
     }
 
-    void AddPoint(int tileIndex)
+    private void Reset()
+    {
+        givenCopyright = false;
+        map.copyright = "";
+        map.tilesRows = 4;
+        map.tilesColumns = 4;
+        audioSource.time = 0;
+        map.songName = "";
+        deltaTime = 1;
+        map.threshold = .8f;
+        map.indicatorLifespan = 2;
+        map.points = new List<PadTap.Map.Point>();
+    }
+
+    private void MakeSureAudioSourceDoesntReset()
+    {
+        if (!audioSource.isPlaying)
+        {
+            audioSource.Play();
+            audioSource.Pause();
+        }
+    }
+
+    private void Play()
+    {
+        if (!audioSource.isPlaying)
+        {
+            audioSource.clip = map.song;
+            audioSource.Play();
+        }
+    }
+
+    private void Pause()
+    {
+        audioSource.Pause();
+    }
+
+    private void MoveTime(float deltaTime)
+    {
+        audioSource.time = Mathf.Clamp(audioSource.time + deltaTime, 0, map.song.length - deltaTime);
+    }
+
+
+
+
+
+    private void ChangeCurrentPoint(int indexInList)
+    {
+        if (map.points.Count != 0)
+        {
+            indexInList = Mathf.Clamp(indexInList, 0, map.points.Count - 1);
+            currentPoint = map.points[indexInList];
+            ChangeCurrentTime(currentPoint.time);
+        }
+    }
+
+    private void ChangeCurrentTime(float time)
+    {
+        time = Mathf.Clamp(time, 0, map.song.length);
+        audioSource.time = time;
+    }
+
+
+
+
+
+    private GUIStyle TilesHorizontalCenter()
+    {
+        GUIStyle center = skin.GetStyle("Center");
+        GUIStyle tileButton = skin.button;
+        center.padding.left = (int)((windowSize.x - map.tilesColumns * (tileButton.fixedWidth + tileButton.margin.left)) / 2);
+        return center;
+    }
+
+    private int GetTileIndex(int i, int j)
+    {
+        return i * map.tilesColumns + j;
+    }
+
+    private void AddPoint(int tileIndex)
     {
         if (map.points == null)
         {
@@ -247,23 +347,7 @@ public class MapMakerWindow : EditorWindow
         map.points.Sort();
     }
 
-    void ChangeCurrentPoint(int indexInList)
-    {
-        if (map.points.Count != 0)
-        {
-            indexInList = Mathf.Clamp(indexInList, 0, map.points.Count - 1);
-            currentPoint = map.points[indexInList];
-            ChangeCurrentTime(currentPoint.time);
-        }
-    }
-
-    void ChangeCurrentTime(float time)
-    {
-        time = Mathf.Clamp(time, 0, map.song.length);
-        audioSource.time = time;
-    }
-
-    void SaveMap()
+    private void SaveMap()
     {
         if (!string.IsNullOrEmpty(map.songName))
         {
@@ -273,7 +357,7 @@ public class MapMakerWindow : EditorWindow
         }
     }
 
-    void CreateMapCopy()
+    private void CreateMapCopy()
     {
         if (map != null)
         {
@@ -298,7 +382,7 @@ public class MapMakerWindow : EditorWindow
         }
     }
 
-    void LoadMap()
+    private void LoadMap()
     {
         if (Selection.assetGUIDs.Length == 1)
         {
@@ -310,7 +394,7 @@ public class MapMakerWindow : EditorWindow
             }
             else
             {
-                canCreate = true;
+                givenCopyright = true;
                 CreateMapCopy();
             }
         }
@@ -318,12 +402,12 @@ public class MapMakerWindow : EditorWindow
 
     public class PointChoicePopup : PopupWindowContent
     {
-        MapMakerWindow parent;
+        private MapMakerWindow parent;
 
-        List<PadTap.Map.Point> points;
-        PadTap.Map.Point currentPoint;
+        private List<PadTap.Map.Point> points;
+        private PadTap.Map.Point currentPoint;
 
-        Vector2 scrollPosition = Vector2.zero;
+        private Vector2 scrollPosition = Vector2.zero;
 
         public override void OnGUI(Rect rect)
         {
