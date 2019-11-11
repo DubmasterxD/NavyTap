@@ -149,60 +149,25 @@ public class MapMakerWindow : EditorWindow
 
     private void DrawPointsManager()
     {
-        Rect a = EditorGUILayout.BeginHorizontal();
-        if (map.points.Count > 0)
-        {
-            currentPoint = map.points[0];
-            foreach (PadTap.Map.Point point in map.points)
-            {
-                if (point.time <= audioSource.time)
-                {
-                    currentPoint = point;
-                }
-            }
-        }
-        string chosen = "-";
-        if (map.points.Count != 0)
-        {
-            chosen = currentPoint.time.ToString();
-        }
-        if (EditorGUILayout.DropdownButton(new GUIContent(chosen), FocusType.Keyboard))
-        {
-            PointChoicePopup menu = new PointChoicePopup();
-            menu.Initialization(this, map.points, currentPoint);
-            PopupWindow.Show(a, menu);
-        }
+        Rect pointsManager = EditorGUILayout.BeginHorizontal();
+        MakePointsDropdown(pointsManager);
         if (GUILayout.Button("Previous Point"))
         {
-            if (audioSource.time > currentPoint.time)
-            {
-                ChangeCurrentPoint(map.points.IndexOf(currentPoint));
-            }
-            else
-            {
-                ChangeCurrentPoint(map.points.IndexOf(currentPoint) - 1);
-            }
+            PreviousPoint();
         }
         if (GUILayout.Button("Next Point"))
         {
-            ChangeCurrentPoint(map.points.IndexOf(currentPoint) + 1);
+            NextPoint();
         }
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Delete Point"))
         {
-            int previousIndex = map.points.IndexOf(currentPoint) - 1;
-            if (previousIndex < 0)
-            {
-                previousIndex = 0;
-            }
-            map.points.Remove(currentPoint);
-            ChangeCurrentPoint(previousIndex);
+            DeletePoint(currentPoint);
         }
         if (GUILayout.Button("Clear Points"))
         {
-            map.points = new List<PadTap.Map.Point>();
-            ChangeCurrentPoint(0);
+            ClearPoints();
         }
         EditorGUILayout.EndHorizontal();
     }
@@ -292,9 +257,81 @@ public class MapMakerWindow : EditorWindow
         audioSource.time = Mathf.Clamp(audioSource.time + deltaTime, 0, map.song.length - deltaTime);
     }
 
+    private void MakePointsDropdown(Rect pointsManager)
+    {
+        SetCurrentPointFromCurrentTime();
+        string chosen = GetCurrentPointsTime();
+        if (EditorGUILayout.DropdownButton(new GUIContent(chosen), FocusType.Keyboard))
+        {
+            ShowDropdown(pointsManager, map.points, currentPoint);
+        }
+    }
 
+    private void SetCurrentPointFromCurrentTime()
+    {
+        if (map.points.Count > 0)
+        {
+            currentPoint = map.points[0];
+            foreach (PadTap.Map.Point point in map.points)
+            {
+                if (point.time <= audioSource.time)
+                {
+                    currentPoint = point;
+                }
+            }
+        }
+    }
 
+    private string GetCurrentPointsTime()
+    {
+        string chosen = "-";
+        if (map.points.Count != 0)
+        {
+            chosen = currentPoint.time.ToString();
+        }
+        return chosen;
+    }
 
+    private void ShowDropdown(Rect pointsManager, List<PadTap.Map.Point> points, PadTap.Map.Point point)
+    {
+        PointChoicePopup menu = new PointChoicePopup();
+        menu.Initialization(this, points, point);
+        PopupWindow.Show(pointsManager, menu);
+    }
+
+    private void PreviousPoint()
+    {
+        if (audioSource.time > currentPoint.time)
+        {
+            ChangeCurrentPoint(map.points.IndexOf(currentPoint));
+        }
+        else
+        {
+            ChangeCurrentPoint(map.points.IndexOf(currentPoint) - 1);
+        }
+    }
+
+    private void NextPoint()
+    {
+        ChangeCurrentPoint(map.points.IndexOf(currentPoint) + 1);
+    }
+
+    private void DeletePoint(PadTap.Map.Point point)
+    {
+        int previousIndex = map.points.IndexOf(point) - 1;
+        if (previousIndex < 0)
+        {
+            previousIndex = 0;
+        }
+        map.points.Remove(point);
+        ChangeCurrentPoint(previousIndex);
+    }
+
+    private void ClearPoints()
+    {
+        map.points = new List<PadTap.Map.Point>();
+        ChangeCurrentPoint(0);
+    }
 
     private void ChangeCurrentPoint(int indexInList)
     {
@@ -311,11 +348,7 @@ public class MapMakerWindow : EditorWindow
         time = Mathf.Clamp(time, 0, map.song.length);
         audioSource.time = time;
     }
-
-
-
-
-
+    
     private GUIStyle TilesHorizontalCenter()
     {
         GUIStyle center = skin.GetStyle("Center");
