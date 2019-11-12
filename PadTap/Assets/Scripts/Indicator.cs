@@ -8,6 +8,9 @@ namespace PadTap
         Spawner spawner;
         Animator animator;
 
+        [SerializeField] bool isDestroyable = true;
+        [SerializeField] bool isClickable = true;
+
         private void Awake()
         {
             spawner = FindObjectOfType<Spawner>();
@@ -16,8 +19,11 @@ namespace PadTap
 
         public void StartIndicator(float lifespan)
         {
-            StartCoroutine(AutoDestroy(lifespan));
-            animator.speed = 1 / lifespan;
+            if (isDestroyable)
+            {
+                StartCoroutine(AutoDestroy(lifespan));
+            }
+            ChangeAnimatorSpeedFromLifespan(lifespan);
         }
 
         IEnumerator AutoDestroy(float seconds)
@@ -25,6 +31,15 @@ namespace PadTap
             yield return new WaitForSeconds(seconds);
             GameOver();
             Destroy(gameObject);
+        }
+
+        public void ChangeAnimatorSpeedFromLifespan(float lifespan)
+        {
+            if (animator != null)
+            {
+                animator.StartPlayback();
+                animator.speed = 1 / lifespan;
+            }
         }
 
         private void GameOver()
@@ -35,15 +50,18 @@ namespace PadTap
 
         public void Click()
         {
-            if (TimeAlive() > spawner.Map.threshold)
+            if (isClickable)
             {
-                Debug.Log("plus");
+                if (TimeAlive() > spawner.Map.threshold)
+                {
+                    Debug.Log("plus");
+                }
+                else
+                {
+                    GameOver();
+                }
+                Destroy(gameObject);
             }
-            else
-            {
-                GameOver();
-            }
-            Destroy(gameObject);
         }
 
         public float TimeAlive()

@@ -15,6 +15,7 @@ public class MapMakerWindow : EditorWindow
         window.Show();
     }
 
+    private MapMakerManager manager = null;
     private PadTap.Map map = null;
     private PadTap.Map.Point currentPoint = null;
     private AudioSource audioSource = null;
@@ -31,6 +32,7 @@ public class MapMakerWindow : EditorWindow
         {
             Repaint();
         }
+        Animate();
     }
 
     private void OnEnable()
@@ -50,10 +52,16 @@ public class MapMakerWindow : EditorWindow
         }
     }
 
+    private void Animate()
+    {
+        manager.Animate(Time.deltaTime);
+    }
+
     private void OnGUI()
     {
+        CheckForManager();
         CheckForAudioSource();
-        if (audioSource != null)
+        if (audioSource != null && manager!=null)
         {
             DrawSongSelection();
             if (map.song != null)
@@ -75,6 +83,18 @@ public class MapMakerWindow : EditorWindow
         }
     }
 
+    private void CheckForManager()
+    {
+        if (manager == null)
+        {
+            manager = FindObjectOfType<MapMakerManager>();
+            if (manager == null)
+            {
+                Debug.LogError("No MapMakerManager found!");
+            }
+        }
+    }
+
     private void CheckForAudioSource()
     {
         if (audioSource == null)
@@ -93,7 +113,7 @@ public class MapMakerWindow : EditorWindow
         map.song = (AudioClip)EditorGUILayout.ObjectField("Song", map.song, typeof(AudioClip), false);
         if (previousSong != map.song)
         {
-            Reset();
+            ResetMap();
         }
     }
 
@@ -115,7 +135,9 @@ public class MapMakerWindow : EditorWindow
     {
         map.songName = EditorGUILayout.TextField("Song Name", map.songName);
         map.threshold = EditorGUILayout.Slider("Threshold", map.threshold, 0, 1);
-        map.indicatorLifespan = EditorGUILayout.Slider("Indicator Lifespan", map.indicatorLifespan, 0, 10);
+        manager.ChageThreshold(map.threshold);
+        map.indicatorLifespan = EditorGUILayout.Slider("Indicator Lifespan", map.indicatorLifespan, 0.1f, 10);
+        manager.ChangeSpeedFromFilespan(map.indicatorLifespan);
         map.tilesRows = EditorGUILayout.IntSlider("Rows", map.tilesRows, 1, 6);
         map.tilesColumns = EditorGUILayout.IntSlider("Columns", map.tilesColumns, 1, 6);
     }
@@ -215,7 +237,7 @@ public class MapMakerWindow : EditorWindow
         map = CreateInstance<PadTap.Map>();
     }
 
-    private void Reset()
+    private void ResetMap()
     {
         givenCopyright = false;
         map.copyright = "";
