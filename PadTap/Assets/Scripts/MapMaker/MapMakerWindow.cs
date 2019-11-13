@@ -21,6 +21,8 @@ public class MapMakerWindow : EditorWindow
     private AudioSource audioSource = null;
     private float deltaTime = 1;
     private bool givenCopyright = false;
+    private int minRows = 1;
+    private int minColumns = 1;
 
     private GUISkin skin = null;
     private string skinsPath = "";
@@ -138,8 +140,50 @@ public class MapMakerWindow : EditorWindow
         manager.ChageThreshold(map.threshold);
         map.indicatorLifespan = EditorGUILayout.Slider("Indicator Lifespan", map.indicatorLifespan, 0.1f, 10);
         manager.ChangeSpeedFromFilespan(map.indicatorLifespan);
-        map.tilesRows = EditorGUILayout.IntSlider("Rows", map.tilesRows, 1, 6);
-        map.tilesColumns = EditorGUILayout.IntSlider("Columns", map.tilesColumns, 1, 6);
+        map.tilesRows = EditorGUILayout.IntSlider("Rows", map.tilesRows, minRows, 6);
+        ChangeMinRows(map.tilesRows);
+        int previousColumns = map.tilesColumns;
+        map.tilesColumns = EditorGUILayout.IntSlider("Columns", map.tilesColumns, minColumns, 6);
+        ChangeMinColumns(map.tilesColumns);
+        if (previousColumns != map.tilesColumns)
+        {
+            ChangeIndexes(previousColumns);
+        }
+    }
+
+    private void ChangeMinRows(int rows)
+    {
+        int highestIndex = 0;
+        foreach(PadTap.Map.Point point in map.points)
+        {
+            if (point.tileIndex > highestIndex)
+            {
+                highestIndex = point.tileIndex;
+            }
+        }
+        minRows = Mathf.FloorToInt(highestIndex / map.tilesColumns) + 1;
+    }
+
+    private void ChangeMinColumns(int columns)
+    {
+        int highestColumnUsed = 0;
+        foreach(PadTap.Map.Point point in map.points)
+        {
+            if (point.tileIndex % map.tilesColumns > highestColumnUsed)
+            {
+                highestColumnUsed = point.tileIndex % map.tilesColumns;
+            }
+        }
+        minColumns = highestColumnUsed + 1;
+    }
+
+    private void ChangeIndexes(int previousColumns)
+    {
+        int deltaColumn = map.tilesColumns - previousColumns;
+        foreach(PadTap.Map.Point point in map.points)
+        {
+            point.tileIndex += Mathf.FloorToInt(point.tileIndex / previousColumns) * deltaColumn;
+        }
     }
 
     private void DrawMusicPlayer()
