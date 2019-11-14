@@ -34,7 +34,8 @@ public class MapMakerWindow : EditorWindow
         {
             Repaint();
         }
-        Animate();
+        manager.SetVisibleTiles(map.tilesRows, map.tilesColumns);
+        manager.Animate(Time.deltaTime);
     }
 
     private void OnEnable()
@@ -52,11 +53,6 @@ public class MapMakerWindow : EditorWindow
         {
             CreateNewMap();
         }
-    }
-
-    private void Animate()
-    {
-        manager.Animate(Time.deltaTime);
     }
 
     private void OnGUI()

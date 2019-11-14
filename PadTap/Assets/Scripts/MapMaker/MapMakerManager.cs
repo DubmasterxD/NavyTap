@@ -3,7 +3,13 @@
 public class MapMakerManager : MonoBehaviour
 {
     [SerializeField] IndicatorVisualizer indicatorVisualizer = null;
-    
+    [SerializeField] TileManager tileManager = null;
+
+    public void SetVisibleTiles(int rows, int columns)
+    {
+        tileManager.ShowTiles(rows, columns);
+    }
+
     public void ChangeSpeedFromFilespan(float lifespan)
     {
         indicatorVisualizer.ChangeSpeedFromFilespan(lifespan);
