@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace PadTap {
+namespace PadTap.Core
+{
     public class Scene : MonoBehaviour
     {
         public void LoadMap(Map map)

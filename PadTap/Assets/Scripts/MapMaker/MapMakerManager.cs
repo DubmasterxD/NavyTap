@@ -1,13 +1,15 @@
-﻿using UnityEngine;
+﻿using PadTap.Maps;
+using UnityEngine;
 
 public class MapMakerManager : MonoBehaviour
 {
     [SerializeField] IndicatorVisualizer indicatorVisualizer = null;
-    [SerializeField] TileManager tileManager = null;
+    [SerializeField] Timeline timeline = null;
+    [SerializeField] TileSpawner tileSpawner = null;
 
     public void SetVisibleTiles(int rows, int columns)
     {
-        tileManager.ShowTiles(rows, columns);
+        tileSpawner.ShowTiles(rows, columns);
     }
 
     public void ChangeSpeedFromFilespan(float lifespan)
@@ -23,5 +25,15 @@ public class MapMakerManager : MonoBehaviour
     public void Animate(float deltaTime)
     {
         indicatorVisualizer.Animate(deltaTime);
+    }
+
+    public void ResetPoints()
+    {
+        timeline.MakeNewList();
+    }
+
+    public void CreatePoint(float timePercentage)
+    {
+        timeline.AddPoint(timePercentage);
     }
 }

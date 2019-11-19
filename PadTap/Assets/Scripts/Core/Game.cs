@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PadTap
+namespace PadTap.Core
 {
     public class Game : MonoBehaviour
     {

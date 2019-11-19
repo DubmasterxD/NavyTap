@@ -1,21 +1,15 @@
 ﻿using UnityEngine;
 
-namespace PadTap
+namespace PadTap.Maps
 {
     public class Tile : MonoBehaviour
     {
         [SerializeField] Transform spawnPoint = null;
+        [SerializeField] Threshold threshold;
 
-        Threshold threshold;
-
-        private void Awake()
+        public void SetThreshold(float value)
         {
-            threshold = GetComponentInChildren<Threshold>();
-        }
-
-        public void SetThreshold(float threshold)
-        {
-            this.threshold.SetThreshold(threshold);
+            threshold.SetThreshold(value);
         }
 
         public void Spawn(Indicator toSpawn, float lifespan)

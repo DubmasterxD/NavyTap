@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2609c8332469c23468d54bd20278ebaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  indicator: {fileID: 0}
-  threshold: {fileID: 0}
-  animation: {fileID: 0}
+  indicator: {fileID: 4709336486963285741}
+  threshold: {fileID: 5543680020598245909}
 --- !u!1001 &3231728633970573738
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30,12 +29,12 @@ PrefabInstance:
     - target: {fileID: 7148838807236959604, guid: 8fb61e7fedd5ecb46873688f8dacfe42,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -1.28
       objectReference: {fileID: 0}
     - target: {fileID: 7148838807236959604, guid: 8fb61e7fedd5ecb46873688f8dacfe42,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -6.37
       objectReference: {fileID: 0}
     - target: {fileID: 7148838807236959604, guid: 8fb61e7fedd5ecb46873688f8dacfe42,
         type: 3}
@@ -82,6 +81,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4272475728279922406, guid: 8fb61e7fedd5ecb46873688f8dacfe42,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272475728279922406, guid: 8fb61e7fedd5ecb46873688f8dacfe42,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4272475728279922406, guid: 8fb61e7fedd5ecb46873688f8dacfe42,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8fb61e7fedd5ecb46873688f8dacfe42, type: 3}
 --- !u!1 &6842176210894853786 stripped
@@ -96,6 +110,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 3231728633970573738}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5543680020598245909 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6932855715584674751, guid: 8fb61e7fedd5ecb46873688f8dacfe42,
+    type: 3}
+  m_PrefabInstance: {fileID: 3231728633970573738}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03798998872f92147bda928853f78629, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6488101227542055163
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -111,12 +137,12 @@ PrefabInstance:
     - target: {fileID: 3981527322171026841, guid: 74d77f3f93e66294cb0d4e5565935231,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1.28
       objectReference: {fileID: 0}
     - target: {fileID: 3981527322171026841, guid: 74d77f3f93e66294cb0d4e5565935231,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -1.28
       objectReference: {fileID: 0}
     - target: {fileID: 3981527322171026841, guid: 74d77f3f93e66294cb0d4e5565935231,
         type: 3}
@@ -163,5 +189,42 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8217885290620450024, guid: 74d77f3f93e66294cb0d4e5565935231,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.1043369
+      objectReference: {fileID: 0}
+    - target: {fileID: 8217885290620450024, guid: 74d77f3f93e66294cb0d4e5565935231,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.1043369
+      objectReference: {fileID: 0}
+    - target: {fileID: 8217885290620450024, guid: 74d77f3f93e66294cb0d4e5565935231,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.1043369
+      objectReference: {fileID: 0}
+    - target: {fileID: 1968267812171417110, guid: 74d77f3f93e66294cb0d4e5565935231,
+        type: 3}
+      propertyPath: isDestroyable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1968267812171417110, guid: 74d77f3f93e66294cb0d4e5565935231,
+        type: 3}
+      propertyPath: isClickable
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 74d77f3f93e66294cb0d4e5565935231, type: 3}
+--- !u!114 &4709336486963285741 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1968267812171417110, guid: 74d77f3f93e66294cb0d4e5565935231,
+    type: 3}
+  m_PrefabInstance: {fileID: 6488101227542055163}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0a08ced844206046bd4db249995ec46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -1,22 +1,28 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using PadTap.Core;
+using System.Collections;
 using UnityEngine;
 
-namespace PadTap
+namespace PadTap.Maps
 {
-    public class Spawner : MonoBehaviour
+    public class IndicatorSpawner : MonoBehaviour
     {
-        [SerializeField] List<Tile> tiles = new List<Tile>();
         [SerializeField] Indicator indicatorPrefab = null;
         [SerializeField] Map map = null;
 
+        TileSpawner tileSpawner = null;
         Coroutine level = null;
 
         public Map Map { get => map; }
 
+        private void Awake()
+        {
+            tileSpawner = GetComponent<TileSpawner>();
+        }
+
         private IEnumerator Start()
         {
             SetMap(FindObjectOfType<Game>().chosenMap);
+            tileSpawner.ShowTiles(map.tilesRows, map.tilesColumns);
             SetThresholds(map.threshold);
             level = StartCoroutine(SpawnContinuously());
             yield return PlaySong(map.song);
@@ -36,7 +42,7 @@ namespace PadTap
 
         private void SetThresholds(float threshold)
         {
-            foreach (Tile tile in tiles)
+            foreach (Tile tile in tileSpawner.tiles)
             {
                 tile.SetThreshold(threshold);
             }
@@ -60,7 +66,7 @@ namespace PadTap
                         yield return new WaitForSeconds(GetFirstIndicatorSpawnTime());
                     }
                 }
-                tiles[map.points[index].tileIndex].Spawn(indicatorPrefab, map.indicatorLifespan);
+                tileSpawner.tiles[map.points[index].tileIndex].Spawn(indicatorPrefab, map.indicatorLifespan);
                 index++;
             }
         }

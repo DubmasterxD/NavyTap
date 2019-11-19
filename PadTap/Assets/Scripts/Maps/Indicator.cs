@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace PadTap
+namespace PadTap.Maps
 {
     public class Indicator : MonoBehaviour
     {
-        Spawner spawner;
+        IndicatorSpawner spawner;
         Animator animator;
 
         [SerializeField] bool isDestroyable = true;
@@ -13,7 +13,7 @@ namespace PadTap
 
         private void Awake()
         {
-            spawner = FindObjectOfType<Spawner>();
+            spawner = FindObjectOfType<IndicatorSpawner>();
             animator = GetComponent<Animator>();
         }
 
@@ -21,12 +21,12 @@ namespace PadTap
         {
             if (isDestroyable)
             {
-                StartCoroutine(AutoDestroy(lifespan));
+                StartCoroutine(AutoDestroyIn(lifespan));
             }
             ChangeAnimatorSpeedFromLifespan(lifespan);
         }
 
-        IEnumerator AutoDestroy(float seconds)
+        IEnumerator AutoDestroyIn(float seconds)
         {
             yield return new WaitForSeconds(seconds);
             GameOver();
@@ -44,8 +44,7 @@ namespace PadTap
 
         private void GameOver()
         {
-            FindObjectOfType<Spawner>().GameOver();
-            Debug.Log("lost");
+            FindObjectOfType<IndicatorSpawner>().GameOver();
         }
 
         public void Click()
@@ -54,7 +53,7 @@ namespace PadTap
             {
                 if (TimeAlive() > spawner.Map.threshold)
                 {
-                    Debug.Log("plus");
+                    //TODO Points
                 }
                 else
                 {

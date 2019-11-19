@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 
-namespace PadTap
+namespace PadTap.Maps
 {
+    [RequireComponent(typeof(AudioSource))]
     public class Audio : MonoBehaviour
     {
         AudioSource audioSource;

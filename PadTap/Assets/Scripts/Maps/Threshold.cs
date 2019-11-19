@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PadTap
+namespace PadTap.Maps
 {
     public class Threshold : MonoBehaviour
     {

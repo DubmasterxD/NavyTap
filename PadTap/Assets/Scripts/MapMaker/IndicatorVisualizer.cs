@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using PadTap.Maps;
+using UnityEngine;
 
 public class IndicatorVisualizer : MonoBehaviour
 {
-    [SerializeField] PadTap.Indicator indicator = null;
-    [SerializeField] PadTap.Threshold threshold = null;
+    [SerializeField] Indicator indicator = null;
+    [SerializeField] Threshold threshold = null;
 
     private float indicatorSpeed = 1f;
     private float indicatorTime = 0f;

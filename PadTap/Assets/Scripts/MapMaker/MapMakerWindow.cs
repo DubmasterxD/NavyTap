@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using PadTap.Core;
 
 public class MapMakerWindow : EditorWindow
 {
@@ -16,8 +17,8 @@ public class MapMakerWindow : EditorWindow
     }
 
     private MapMakerManager manager = null;
-    private PadTap.Map map = null;
-    private PadTap.Map.Point currentPoint = null;
+    private Map map = null;
+    private Map.Point currentPoint = null;
     private AudioSource audioSource = null;
     private float deltaTime = 1;
     private bool givenCopyright = false;
@@ -131,7 +132,7 @@ public class MapMakerWindow : EditorWindow
 
     private void DrawMapSettings()
     {
-        map.songName = EditorGUILayout.TextField("Song Name", map.songName);
+        map.mapName = EditorGUILayout.TextField("Song Name", map.mapName);
         map.threshold = EditorGUILayout.Slider("Threshold", map.threshold, 0, 1);
         manager.ChageThreshold(map.threshold);
         map.indicatorLifespan = EditorGUILayout.Slider("Indicator Lifespan", map.indicatorLifespan, 0.1f, 10);
@@ -150,7 +151,7 @@ public class MapMakerWindow : EditorWindow
     private void ChangeMinRows(int rows)
     {
         int highestIndex = 0;
-        foreach(PadTap.Map.Point point in map.points)
+        foreach(Map.Point point in map.points)
         {
             if (point.tileIndex > highestIndex)
             {
@@ -163,7 +164,7 @@ public class MapMakerWindow : EditorWindow
     private void ChangeMinColumns(int columns)
     {
         int highestColumnUsed = 0;
-        foreach(PadTap.Map.Point point in map.points)
+        foreach(Map.Point point in map.points)
         {
             if (point.tileIndex % map.tilesColumns > highestColumnUsed)
             {
@@ -176,7 +177,7 @@ public class MapMakerWindow : EditorWindow
     private void ChangeIndexes(int previousColumns)
     {
         int deltaColumn = map.tilesColumns - previousColumns;
-        foreach(PadTap.Map.Point point in map.points)
+        foreach(Map.Point point in map.points)
         {
             point.tileIndex += Mathf.FloorToInt(point.tileIndex / previousColumns) * deltaColumn;
         }
@@ -253,7 +254,7 @@ public class MapMakerWindow : EditorWindow
     private void DrawMapSave()
     {
         EditorGUILayout.BeginHorizontal();
-        if (map.songName == "")
+        if (map.mapName == "")
         {
             EditorGUILayout.HelpBox("Song Name required!", MessageType.Warning);
         }
@@ -274,7 +275,7 @@ public class MapMakerWindow : EditorWindow
 
     private void CreateNewMap()
     {
-        map = CreateInstance<PadTap.Map>();
+        map = CreateInstance<Map>();
     }
 
     private void ResetMap()
@@ -284,11 +285,11 @@ public class MapMakerWindow : EditorWindow
         map.tilesRows = 4;
         map.tilesColumns = 4;
         audioSource.time = 0;
-        map.songName = "";
+        map.mapName = "";
         deltaTime = 1;
         map.threshold = .8f;
         map.indicatorLifespan = 2;
-        map.points = new List<PadTap.Map.Point>();
+        map.points = new List<Map.Point>();
     }
 
     private void MakeSureAudioSourceDoesntReset()
@@ -334,7 +335,7 @@ public class MapMakerWindow : EditorWindow
         if (map.points.Count > 0)
         {
             currentPoint = map.points[0];
-            foreach (PadTap.Map.Point point in map.points)
+            foreach (Map.Point point in map.points)
             {
                 if (point.time <= audioSource.time)
                 {
@@ -354,7 +355,7 @@ public class MapMakerWindow : EditorWindow
         return chosen;
     }
 
-    private void ShowDropdown(Rect pointsManager, List<PadTap.Map.Point> points, PadTap.Map.Point point)
+    private void ShowDropdown(Rect pointsManager, List<Map.Point> points, Map.Point point)
     {
         PointChoicePopup menu = new PointChoicePopup();
         menu.Initialization(this, points, point);
@@ -378,7 +379,7 @@ public class MapMakerWindow : EditorWindow
         ChangeCurrentPoint(map.points.IndexOf(currentPoint) + 1);
     }
 
-    private void DeletePoint(PadTap.Map.Point point)
+    private void DeletePoint(Map.Point point)
     {
         int previousIndex = map.points.IndexOf(point) - 1;
         if (previousIndex < 0)
@@ -391,7 +392,7 @@ public class MapMakerWindow : EditorWindow
 
     private void ClearPoints()
     {
-        map.points = new List<PadTap.Map.Point>();
+        map.points = new List<Map.Point>();
         ChangeCurrentPoint(0);
     }
 
@@ -428,25 +429,25 @@ public class MapMakerWindow : EditorWindow
     {
         if (map.points == null)
         {
-            map.points = new List<PadTap.Map.Point>();
+            map.points = new List<Map.Point>();
         }
-        foreach (PadTap.Map.Point point in map.points)
+        foreach (Map.Point point in map.points)
         {
             if (point.time == audioSource.time)
             {
                 return;
             }
         }
-        PadTap.Map.Point newPoint = new PadTap.Map.Point(audioSource.time, tileIndex);
+        Map.Point newPoint = new Map.Point(audioSource.time, tileIndex);
         map.points.Add(newPoint);
         map.points.Sort();
     }
 
     private void SaveMap()
     {
-        if (!string.IsNullOrEmpty(map.songName))
+        if (!string.IsNullOrEmpty(map.mapName))
         {
-            string path = "Assets/Maps/" + map.songName + ".asset";
+            string path = "Assets/Maps/" + map.mapName + ".asset";
             AssetDatabase.CreateAsset(map, path);
             CreateMapCopy();
         }
@@ -456,18 +457,18 @@ public class MapMakerWindow : EditorWindow
     {
         if (map != null)
         {
-            PadTap.Map newInstance = CreateInstance<PadTap.Map>();
+            Map newInstance = CreateInstance<Map>();
             newInstance.copyright = map.copyright;
             newInstance.indicatorLifespan = map.indicatorLifespan;
             newInstance.song = map.song;
-            newInstance.songName = map.songName;
+            newInstance.mapName = map.mapName;
             newInstance.threshold = map.threshold;
             newInstance.tilesColumns = map.tilesColumns;
             newInstance.tilesRows = map.tilesRows;
-            newInstance.points = new List<PadTap.Map.Point>();
-            foreach (PadTap.Map.Point point in map.points)
+            newInstance.points = new List<Map.Point>();
+            foreach (Map.Point point in map.points)
             {
-                newInstance.points.Add(new PadTap.Map.Point(point.time, point.tileIndex));
+                newInstance.points.Add(new Map.Point(point.time, point.tileIndex));
             }
             map = newInstance;
         }
@@ -482,7 +483,7 @@ public class MapMakerWindow : EditorWindow
         if (Selection.assetGUIDs.Length == 1)
         {
             string mapGUID = Selection.assetGUIDs[0];
-            map = AssetDatabase.LoadAssetAtPath<PadTap.Map>(AssetDatabase.GUIDToAssetPath(mapGUID));
+            map = AssetDatabase.LoadAssetAtPath<Map>(AssetDatabase.GUIDToAssetPath(mapGUID));
             if (map == null)
             {
                 CreateNewMap();
@@ -499,8 +500,8 @@ public class MapMakerWindow : EditorWindow
     {
         private MapMakerWindow parent;
 
-        private List<PadTap.Map.Point> points;
-        private PadTap.Map.Point currentPoint;
+        private List<Map.Point> points;
+        private Map.Point currentPoint;
 
         private Vector2 scrollPosition = Vector2.zero;
 
@@ -533,7 +534,7 @@ public class MapMakerWindow : EditorWindow
             }
         }
 
-        public void Initialization(MapMakerWindow newParent, List<PadTap.Map.Point> newPoints, PadTap.Map.Point newCurrentPoint)
+        public void Initialization(MapMakerWindow newParent, List<Map.Point> newPoints, Map.Point newCurrentPoint)
         {
             parent = newParent;
             points = newPoints;

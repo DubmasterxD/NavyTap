@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using PadTap.Core;
+using UnityEngine;
 
-namespace PadTap {
+namespace PadTap.Menu
+{
     public class MapChoice : MonoBehaviour
     {
         [SerializeField] Map map = null;

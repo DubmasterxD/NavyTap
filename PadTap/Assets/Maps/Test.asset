@@ -14,23 +14,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tilesRows: 4
   tilesColumns: 4
-  threshold: 0.8
+  threshold: 0.5
   indicatorLifespan: 1
   points:
   - time: 0
     tileIndex: 0
-  - time: 1.4
-    tileIndex: 1
-  - time: 2
-    tileIndex: 0
-  - time: 3
+  - time: 1.7706041
     tileIndex: 2
-  - time: 5
-    tileIndex: 2
-  - time: 6
-    tileIndex: 8
-  - time: 6.5
-    tileIndex: 9
-  - time: 9
+  - time: 2.00525
+    tileIndex: 3
+  - time: 2.3252292
+    tileIndex: 6
+  - time: 2.7091668
+    tileIndex: 7
+  - time: 3.0718334
+    tileIndex: 10
+  - time: 3.4558334
+    tileIndex: 11
+  - time: 3.9038334
     tileIndex: 14
+  - time: 4.2665
+    tileIndex: 15
+  - time: 4.7571044
+    tileIndex: 13
   song: {fileID: 8300000, guid: 6e71fe23e7bbfe24996c964da815bd09, type: 3}
+  mapName: Test
+  copyright: asdas
