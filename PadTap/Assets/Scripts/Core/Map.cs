@@ -41,5 +41,15 @@ namespace PadTap.Core
                 }
             }
         }
+
+        public float GetPerfectScore()
+        {
+            return 1 - threshold / 2;
+        }
+
+        public float GetPerfectScoreAcceptableDifference()
+        {
+            return (1 - threshold) / 6;
+        }
     }
 }

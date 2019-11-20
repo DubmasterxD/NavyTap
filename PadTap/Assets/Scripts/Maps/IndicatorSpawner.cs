@@ -6,49 +6,43 @@ namespace PadTap.Maps
 {
     public class IndicatorSpawner : MonoBehaviour
     {
-        [SerializeField] Indicator indicatorPrefab = null;
-        [SerializeField] Map map = null;
+        [SerializeField] private Indicator indicatorPrefab = null;
 
-        TileSpawner tileSpawner = null;
-        Coroutine level = null;
+        public Map map { get; private set; } = null;
 
-        public Map Map { get => map; }
+        private Game game = null;
+        private TileSpawner tileSpawner = null;
+        private Coroutine spawning = null;
 
         private void Awake()
         {
+            game = FindObjectOfType<Game>();
             tileSpawner = GetComponent<TileSpawner>();
         }
 
-        private IEnumerator Start()
+        private void OnEnable()
         {
-            SetMap(FindObjectOfType<Game>().chosenMap);
-            tileSpawner.ShowTiles(map.tilesRows, map.tilesColumns);
-            SetThresholds(map.threshold);
-            level = StartCoroutine(SpawnContinuously());
-            yield return PlaySong(map.song);
-            StartCoroutine(EndAfterSongEnds());
+            game.onGameStart += StartGame;
+        }
+
+        private void OnDisable()
+        {
+            game.onGameStart -= StartGame;
+        }
+
+        public void StartGame(Map map)
+        {
+            spawning = StartCoroutine(SpawnContinuously());
+            StartCoroutine(PlaySong(map.song));
         }
 
         public void GameOver()
         {
-            StopCoroutine(level);
-            FindObjectOfType<Scene>().LoadMenu();
+            StopCoroutine(spawning);
+            game.GameOver();
         }
 
-        private void SetMap(Map map)
-        {
-            this.map = map;
-        }
-
-        private void SetThresholds(float threshold)
-        {
-            foreach (Tile tile in tileSpawner.tiles)
-            {
-                tile.SetThreshold(threshold);
-            }
-        }
-
-        IEnumerator SpawnContinuously()
+        private IEnumerator SpawnContinuously()
         {
             int index = 0;
             while (index<map.points.Count)
@@ -78,17 +72,13 @@ namespace PadTap.Maps
                 yield return new WaitForSeconds(-GetFirstIndicatorSpawnTime());
             }
             FindObjectOfType<Audio>().Play(song);
+            yield return new WaitForSeconds(map.song.length);
+            GameOver();
         }
 
         private float GetFirstIndicatorSpawnTime()
         {
-            return map.points[0].time - ((1 - map.threshold) / 2 + map.threshold) * map.indicatorLifespan;
-        }
-
-        IEnumerator EndAfterSongEnds()
-        {
-            yield return new WaitForSeconds(map.song.length);
-            GameOver();
+            return map.points[0].time - map.GetPerfectScore() * map.indicatorLifespan;
         }
     }
 }

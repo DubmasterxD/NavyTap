@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using PadTap.Core;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace PadTap.Maps
@@ -11,6 +13,29 @@ namespace PadTap.Maps
         private float mapSize = 10;
 
         public List<Tile> tiles { get; private set; } = null;
+
+        private Game game = null;
+
+        private void Awake()
+        {
+            game = FindObjectOfType<Game>();
+        }
+
+        private void OnEnable()
+        {
+            game.onGameStart += StartGame;
+        }
+
+        private void OnDisable()
+        {
+            game.onGameStart -= StartGame;
+        }
+
+        private void StartGame(Map map)
+        {
+            ShowTiles(map.tilesRows, map.tilesColumns);
+            SetThresholds(map.threshold);
+        }
 
         public void ShowTiles(int rows, int columns)
         {
@@ -52,6 +77,14 @@ namespace PadTap.Maps
             for (int i = 0; i < size; i++)
             {
                 tiles[i].gameObject.SetActive(true);
+            }
+        }
+
+        private void SetThresholds(float threshold)
+        {
+            foreach (Tile tile in tiles)
+            {
+                tile.SetThreshold(threshold);
             }
         }
     }

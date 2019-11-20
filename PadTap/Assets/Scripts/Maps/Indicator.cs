@@ -8,9 +8,6 @@ namespace PadTap.Maps
         IndicatorSpawner spawner;
         Animator animator;
 
-        [SerializeField] bool isDestroyable = true;
-        [SerializeField] bool isClickable = true;
-
         private void Awake()
         {
             spawner = FindObjectOfType<IndicatorSpawner>();
@@ -19,10 +16,7 @@ namespace PadTap.Maps
 
         public void StartIndicator(float lifespan)
         {
-            if (isDestroyable)
-            {
-                StartCoroutine(AutoDestroyIn(lifespan));
-            }
+            StartCoroutine(AutoDestroyIn(lifespan));
             ChangeAnimatorSpeedFromLifespan(lifespan);
         }
 
@@ -44,23 +38,20 @@ namespace PadTap.Maps
 
         private void GameOver()
         {
-            FindObjectOfType<IndicatorSpawner>().GameOver();
+            spawner.GameOver();
         }
 
         public void Click()
         {
-            if (isClickable)
+            if (TimeAlive() > spawner.map.threshold)
             {
-                if (TimeAlive() > spawner.Map.threshold)
-                {
-                    //TODO Points
-                }
-                else
-                {
-                    GameOver();
-                }
-                Destroy(gameObject);
+                //TODO Points
             }
+            else
+            {
+                GameOver();
+            }
+            Destroy(gameObject);
         }
 
         public float TimeAlive()
