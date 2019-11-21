@@ -12,6 +12,11 @@ namespace PadTap.Maps
             threshold.SetThreshold(value);
         }
 
+        public void SetPerfectScore(float perfectScore, float perfectScoreDifference)
+        {
+            threshold.SetPerfectScore(perfectScore, perfectScoreDifference);
+        }
+
         public void Spawn(Indicator toSpawn, float lifespan)
         {
             Indicator indicator = Instantiate(toSpawn, spawnPoint);

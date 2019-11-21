@@ -34,7 +34,7 @@ namespace PadTap.Maps
         private void StartGame(Map map)
         {
             ShowTiles(map.tilesRows, map.tilesColumns);
-            SetThresholds(map.threshold);
+            SetThresholds(map.threshold, map.GetPerfectScore(), map.GetPerfectScoreAcceptableDifference());
         }
 
         public void ShowTiles(int rows, int columns)
@@ -80,11 +80,12 @@ namespace PadTap.Maps
             }
         }
 
-        private void SetThresholds(float threshold)
+        private void SetThresholds(float threshold, float perferctScore, float perfectScoreDifference)
         {
             foreach (Tile tile in tiles)
             {
                 tile.SetThreshold(threshold);
+                tile.SetPerfectScore(perferctScore, perfectScoreDifference);
             }
         }
     }

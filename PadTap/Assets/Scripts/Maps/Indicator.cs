@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace PadTap.Maps
 {
+    [RequireComponent(typeof(Animator))]
     public class Indicator : MonoBehaviour
     {
         IndicatorSpawner spawner;
@@ -29,11 +30,8 @@ namespace PadTap.Maps
 
         public void ChangeAnimatorSpeedFromLifespan(float lifespan)
         {
-            if (animator != null)
-            {
-                animator.StartPlayback();
-                animator.speed = 1 / lifespan;
-            }
+            animator.StartPlayback();
+            animator.speed = 1 / lifespan;
         }
 
         private void GameOver()

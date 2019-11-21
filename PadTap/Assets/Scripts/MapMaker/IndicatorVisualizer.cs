@@ -1,39 +1,49 @@
 ﻿using PadTap.Maps;
 using UnityEngine;
 
-public class IndicatorVisualizer : MonoBehaviour
+namespace PadTap.MapMaker
 {
-    [SerializeField] Indicator indicator = null;
-    [SerializeField] Threshold threshold = null;
-
-    private float indicatorSpeed = 1f;
-    private float indicatorTime = 0f;
-
-    public void ChangeSpeedFromFilespan(float lifespan)
+    public class IndicatorVisualizer : MonoBehaviour
     {
-        indicatorSpeed = 1 / lifespan;
-    }
+        [SerializeField] Indicator indicator = null;
+        [SerializeField] Threshold threshold = null;
 
-    public void ChangeThreshold(float value)
-    {
-        if (threshold != null)
+        private float indicatorSpeed = 1f;
+        private float indicatorTime = 0f;
+
+        public void ChangeSpeedFromFilespan(float lifespan)
         {
-            threshold.SetThreshold(value);
+            indicatorSpeed = 1 / lifespan;
         }
-    }
 
-    public void Animate(float deltaTime)
-    {
-        AnimateIndicator(deltaTime);
-    }
-
-    private void AnimateIndicator(float deltaTime)
-    {
-        indicatorTime += deltaTime * indicatorSpeed;
-        if (indicatorTime > 1)
+        public void ChangeThreshold(float value)
         {
-            indicatorTime -= 1;
+            if (threshold != null)
+            {
+                threshold.SetThreshold(value);
+            }
         }
-        indicator.GetComponentInChildren<SpriteRenderer>().transform.localScale = new Vector3(indicatorTime, indicatorTime, indicatorTime);
+        public void ChangePerfectScore(float perfectScore, float perfectScoreDifference)
+        {
+            if (threshold != null)
+            {
+                threshold.SetPerfectScore(perfectScore, perfectScoreDifference);
+            }
+        }
+
+        public void Animate(float deltaTime)
+        {
+            AnimateIndicator(deltaTime);
+        }
+
+        private void AnimateIndicator(float deltaTime)
+        {
+            indicatorTime += deltaTime * indicatorSpeed;
+            if (indicatorTime > 1)
+            {
+                indicatorTime -= 1;
+            }
+            indicator.GetComponentInChildren<SpriteRenderer>().transform.localScale = new Vector3(indicatorTime, indicatorTime, indicatorTime);
+        }
     }
 }

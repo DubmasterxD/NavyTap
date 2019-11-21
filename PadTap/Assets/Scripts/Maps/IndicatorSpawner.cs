@@ -32,6 +32,7 @@ namespace PadTap.Maps
 
         public void StartGame(Map map)
         {
+            this.map = map;
             spawning = StartCoroutine(SpawnContinuously());
             StartCoroutine(PlaySong(map.song));
         }
@@ -47,21 +48,26 @@ namespace PadTap.Maps
             int index = 0;
             while (index<map.points.Count)
             {
-                float previousTime = 0;
-                if (index != 0)
-                { 
-                    previousTime = map.points[index - 1].time;
-                    yield return new WaitForSeconds(map.points[index].time - previousTime);
-                }
-                else
-                {
-                    if (GetFirstIndicatorSpawnTime() > 0)
-                    {
-                        yield return new WaitForSeconds(GetFirstIndicatorSpawnTime());
-                    }
-                }
-                tileSpawner.tiles[map.points[index].tileIndex].Spawn(indicatorPrefab, map.indicatorLifespan);
+                yield return WaitToSpawnIndicator(index);
+                int tileIndexToSpawn = map.points[index].tileIndex;
+                tileSpawner.tiles[tileIndexToSpawn].Spawn(indicatorPrefab, map.indicatorLifespan);
                 index++;
+            }
+        }
+
+        private IEnumerator WaitToSpawnIndicator(int index)
+        {
+            if (index != 0)
+            {
+                float previousTime =  map.points[index - 1].time;
+                yield return new WaitForSeconds(map.points[index].time - previousTime);
+            }
+            else
+            {
+                if (GetFirstIndicatorSpawnTime() > 0)
+                {
+                    yield return new WaitForSeconds(GetFirstIndicatorSpawnTime());
+                }
             }
         }
 

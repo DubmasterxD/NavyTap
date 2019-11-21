@@ -17,7 +17,7 @@ MonoBehaviour:
   threshold: 0.5
   indicatorLifespan: 1
   points:
-  - time: 0
+  - time: 1.4292709
     tileIndex: 0
   - time: 1.7706041
     tileIndex: 2

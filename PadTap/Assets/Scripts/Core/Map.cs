@@ -44,7 +44,7 @@ namespace PadTap.Core
 
         public float GetPerfectScore()
         {
-            return 1 - threshold / 2;
+            return (1 + threshold) / 2;
         }
 
         public float GetPerfectScoreAcceptableDifference()

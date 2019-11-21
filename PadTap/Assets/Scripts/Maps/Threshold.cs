@@ -4,15 +4,21 @@ namespace PadTap.Maps
 {
     public class Threshold : MonoBehaviour
     {
-        public void SetThreshold(float threshold)
+        [SerializeField] Transform threshold = null;
+        [SerializeField] Transform perfectScoreMax = null;
+        [SerializeField] Transform perfectScoreMin = null;
+
+        public void SetThreshold(float newThreshold)
         {
-            //TODO change to child object
-            transform.localScale = new Vector3(threshold, threshold, threshold);
+            threshold.localScale = new Vector3(newThreshold, newThreshold, newThreshold);
         }
 
-        public void SetPerfectScore(float perfectScore, float perfectScoreDifference)
+        public void SetPerfectScore(float newPerfectScore, float newPerfectScoreDifference)
         {
-            //TODO
+            float newMaxPerfectScore = newPerfectScore + newPerfectScoreDifference;
+            float newMinPerfectScore = newPerfectScore - newPerfectScoreDifference;
+            perfectScoreMax.localScale = new Vector3(newMaxPerfectScore, newMaxPerfectScore, newMaxPerfectScore);
+            perfectScoreMin.localScale = new Vector3(newMinPerfectScore, newMinPerfectScore, newMinPerfectScore);
         }
     }
 }

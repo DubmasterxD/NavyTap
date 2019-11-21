@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace PadTap.Maps
+namespace PadTap.MapMaker
 {
     public class Timeline : MonoBehaviour
     {

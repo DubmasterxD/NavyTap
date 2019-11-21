@@ -1,39 +1,47 @@
 ﻿using PadTap.Maps;
 using UnityEngine;
 
-public class MapMakerManager : MonoBehaviour
+namespace PadTap.MapMaker
 {
-    [SerializeField] IndicatorVisualizer indicatorVisualizer = null;
-    [SerializeField] Timeline timeline = null;
-    [SerializeField] TileSpawner tileSpawner = null;
-
-    public void SetVisibleTiles(int rows, int columns)
+    public class MapMakerManager : MonoBehaviour
     {
-        tileSpawner.ShowTiles(rows, columns);
-    }
+        [SerializeField] IndicatorVisualizer indicatorVisualizer = null;
+        [SerializeField] Timeline timeline = null;
+        [SerializeField] TileSpawner tileSpawner = null;
 
-    public void ChangeSpeedFromFilespan(float lifespan)
-    {
-        indicatorVisualizer.ChangeSpeedFromFilespan(lifespan);
-    }
+        public void SetVisibleTiles(int rows, int columns)
+        {
+            tileSpawner.ShowTiles(rows, columns);
+        }
 
-    public void ChageThreshold(float threshold)
-    {
-        indicatorVisualizer.ChangeThreshold(threshold);
-    }
+        public void ChangeSpeedFromFilespan(float lifespan)
+        {
+            indicatorVisualizer.ChangeSpeedFromFilespan(lifespan);
+        }
 
-    public void Animate(float deltaTime)
-    {
-        indicatorVisualizer.Animate(deltaTime);
-    }
+        public void ChageThreshold(float threshold)
+        {
+            indicatorVisualizer.ChangeThreshold(threshold);
+        }
 
-    public void ResetPoints()
-    {
-        timeline.MakeNewList();
-    }
+        public void ChangePerfectScore(float perfectScore, float perfectScoreDifference)
+        {
+            indicatorVisualizer.ChangePerfectScore(perfectScore, perfectScoreDifference);
+        }
 
-    public void CreatePoint(float timePercentage)
-    {
-        timeline.AddPoint(timePercentage);
+        public void Animate(float deltaTime)
+        {
+            indicatorVisualizer.Animate(deltaTime);
+        }
+
+        public void ResetPoints()
+        {
+            timeline.MakeNewList();
+        }
+
+        public void CreatePoint(float timePercentage)
+        {
+            timeline.AddPoint(timePercentage);
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PadTap.Maps
+namespace PadTap.MapMaker
 {
     public class TimelinePoint : MonoBehaviour
     {
