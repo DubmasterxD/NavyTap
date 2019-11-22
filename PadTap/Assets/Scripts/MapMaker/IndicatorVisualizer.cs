@@ -1,13 +1,10 @@
-﻿using PadTap.Maps;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace PadTap.MapMaker
 {
     public class IndicatorVisualizer : MonoBehaviour
     {
-        [SerializeField] Indicator indicator = null;
-        [SerializeField] Threshold threshold = null;
-
+        [SerializeField] SpriteRenderer spriteRenderer = null;
         private float indicatorSpeed = 1f;
         private float indicatorTime = 0f;
 
@@ -16,34 +13,30 @@ namespace PadTap.MapMaker
             indicatorSpeed = 1 / lifespan;
         }
 
-        public void ChangeThreshold(float value)
+        public void AnimateIndicator(float deltaTime)
         {
-            if (threshold != null)
+            if (spriteRenderer != null)
             {
-                threshold.SetThreshold(value);
-            }
-        }
-        public void ChangePerfectScore(float perfectScore, float perfectScoreDifference)
-        {
-            if (threshold != null)
-            {
-                threshold.SetPerfectScore(perfectScore, perfectScoreDifference);
+                indicatorTime += deltaTime * indicatorSpeed;
+                if (indicatorTime > 1)
+                {
+                    indicatorTime -= 1;
+                }
+                spriteRenderer.transform.localScale = new Vector3(indicatorTime, indicatorTime, indicatorTime);
             }
         }
 
-        public void Animate(float deltaTime)
+        public void SetIndicatorScale(float lifeTime)
         {
-            AnimateIndicator(deltaTime);
-        }
-
-        private void AnimateIndicator(float deltaTime)
-        {
-            indicatorTime += deltaTime * indicatorSpeed;
-            if (indicatorTime > 1)
+            indicatorTime = lifeTime * indicatorSpeed;
+            if (indicatorTime > 1 || indicatorTime < 0)
             {
-                indicatorTime -= 1;
+                gameObject.SetActive(false);
             }
-            indicator.GetComponentInChildren<SpriteRenderer>().transform.localScale = new Vector3(indicatorTime, indicatorTime, indicatorTime);
+            else
+            {
+                AnimateIndicator(0);
+            }
         }
     }
 }

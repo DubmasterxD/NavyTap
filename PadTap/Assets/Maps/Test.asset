@@ -37,6 +37,24 @@ MonoBehaviour:
     tileIndex: 15
   - time: 4.7571044
     tileIndex: 13
+  - time: 7.8544793
+    tileIndex: 0
+  - time: 8.1744585
+    tileIndex: 1
+  - time: 8.579667
+    tileIndex: 4
+  - time: 8.899563
+    tileIndex: 5
+  - time: 9.454083
+    tileIndex: 8
+  - time: 9.774
+    tileIndex: 9
+  - time: 10.136562
+    tileIndex: 12
+  - time: 10.4991045
+    tileIndex: 13
+  - time: 10.883
+    tileIndex: 10
   song: {fileID: 8300000, guid: 6e71fe23e7bbfe24996c964da815bd09, type: 3}
   mapName: Test
   copyright: asdas

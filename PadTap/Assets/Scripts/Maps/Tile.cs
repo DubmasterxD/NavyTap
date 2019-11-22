@@ -5,22 +5,31 @@ namespace PadTap.Maps
     public class Tile : MonoBehaviour
     {
         [SerializeField] Transform spawnPoint = null;
-        [SerializeField] Threshold threshold;
+        [SerializeField] Threshold threshold = null;
 
         public void SetThreshold(float value)
         {
-            threshold.SetThreshold(value);
+            if (threshold != null)
+            {
+                threshold.SetThreshold(value);
+            }
         }
 
         public void SetPerfectScore(float perfectScore, float perfectScoreDifference)
         {
-            threshold.SetPerfectScore(perfectScore, perfectScoreDifference);
+            if (threshold != null)
+            {
+                threshold.SetPerfectScore(perfectScore, perfectScoreDifference);
+            }
         }
 
         public void Spawn(Indicator toSpawn, float lifespan)
         {
-            Indicator indicator = Instantiate(toSpawn, spawnPoint);
-            indicator.StartIndicator(lifespan);
+            if (spawnPoint != null)
+            {
+                Indicator indicator = Instantiate(toSpawn, spawnPoint);
+                indicator.StartIndicator(lifespan);
+            }
         }
     }
 }

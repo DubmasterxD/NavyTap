@@ -18,81 +18,90 @@ namespace PadTap.MapMaker
             window.Show();
         }
 
-        private MapMakerManager manager = null;
+        private MapMakerVisualizerManager visualizationManager = null;
+        private AudioSource audioSource = null;
         private Map map = null;
         private Map.Point currentPoint = null;
-        private AudioSource audioSource = null;
+        private float currentTime = 0;
+        private bool isPlaying = false;
         private float deltaTime = 1;
         private bool givenCopyright = false;
+
         private int minRows = 1;
+        private int maxRows = 6;
         private int minColumns = 1;
+        private int maxColumns = 6;
+        private float minIndicatorLifespan = 0.1f;
+        private float maxIndicatorLifespan = 10;
 
         private GUISkin skin = null;
         private string skinsPath = "";
-        private string skinName = "Test";
+        private string defaultSkinName = "Test";
 
         private void Update()
         {
+            CheckForMap();
+            CheckForAudioSource();
+            CheckForSkin(skinsPath + defaultSkinName);
+            CheckForVisualizationManager();
             if (audioSource != null && audioSource.isPlaying)
             {
                 Repaint();
             }
-            manager.SetVisibleTiles(map.tilesRows, map.tilesColumns);
-            manager.Animate(Time.deltaTime);
+            if (visualizationManager != null && map!=null)
+            {
+                visualizationManager.ManualUpdate(map, currentTime, Time.deltaTime);
+            }
         }
 
-        private void OnEnable()
+        private void OnGUI()
         {
-            if (skin == null)
+            if (map != null)
             {
-                skin = Resources.Load<GUISkin>(skinsPath + skinName);
-                if (skin == null)
+                DrawSongSelection();
+                if (!givenCopyright)
                 {
-                    Debug.LogError("Invalid skin path or name!");
-                    skin = CreateInstance<GUISkin>();
+                    DrawCopyright();
+                }
+                else
+                {
+                    DrawMapSettings();
+                    DrawMusicPlayer();
+                    DrawPointsManager();
+                    DrawTiles();
+                    DrawMapSave();
                 }
             }
+            DrawMapLoad();
+        }
+
+        private void CheckForMap()
+        {
             if (map == null)
             {
                 CreateNewMap();
             }
         }
 
-        private void OnGUI()
+        private void CheckForVisualizationManager()
         {
-            CheckForManager();
-            CheckForAudioSource();
-            if (audioSource != null && manager != null)
+            if (visualizationManager == null)
             {
-                DrawSongSelection();
-                if (map.song != null)
+                visualizationManager = FindObjectOfType<MapMakerVisualizerManager>();
+                if (visualizationManager == null)
                 {
-                    if (!givenCopyright)
-                    {
-                        DrawCopyright();
-                    }
-                    else
-                    {
-                        DrawMapSettings();
-                        DrawMusicPlayer();
-                        DrawPointsManager();
-                        DrawTiles();
-                        DrawMapSave();
-                    }
+                    Debug.LogWarning("No MapMakerManager found!");
                 }
-                DrawMapLoad();
             }
         }
 
-        private void CheckForManager()
+        private void CheckForSkin(string path)
         {
-            if (manager == null)
+            skin = Resources.Load<GUISkin>(path);
+            if (skin == null)
             {
-                manager = FindObjectOfType<MapMakerManager>();
-                if (manager == null)
-                {
-                    Debug.LogError("No MapMakerManager found!");
-                }
+                Debug.LogError("Invalid skin path or name!");
+                skin = CreateInstance<GUISkin>();
             }
         }
 
@@ -136,14 +145,11 @@ namespace PadTap.MapMaker
         {
             map.mapName = EditorGUILayout.TextField("Song Name", map.mapName);
             map.threshold = EditorGUILayout.Slider("Threshold", map.threshold, 0, 1);
-            manager.ChageThreshold(map.threshold);
-            manager.ChangePerfectScore(map.GetPerfectScore(), map.GetPerfectScoreAcceptableDifference());
-            map.indicatorLifespan = EditorGUILayout.Slider("Indicator Lifespan", map.indicatorLifespan, 0.1f, 10);
-            manager.ChangeSpeedFromFilespan(map.indicatorLifespan);
-            map.tilesRows = EditorGUILayout.IntSlider("Rows", map.tilesRows, minRows, 6);
+            map.indicatorLifespan = EditorGUILayout.Slider("Indicator Lifespan", map.indicatorLifespan, minIndicatorLifespan, maxIndicatorLifespan);
+            map.tilesRows = EditorGUILayout.IntSlider("Rows", map.tilesRows, minRows, maxRows);
             ChangeMinRows(map.tilesRows);
             int previousColumns = map.tilesColumns;
-            map.tilesColumns = EditorGUILayout.IntSlider("Columns", map.tilesColumns, minColumns, 6);
+            map.tilesColumns = EditorGUILayout.IntSlider("Columns", map.tilesColumns, minColumns, maxColumns);
             ChangeMinColumns(map.tilesColumns);
             if (previousColumns != map.tilesColumns)
             {
@@ -154,11 +160,14 @@ namespace PadTap.MapMaker
         private void ChangeMinRows(int rows)
         {
             int highestIndex = 0;
-            foreach (Map.Point point in map.points)
+            if (map.points != null)
             {
-                if (point.tileIndex > highestIndex)
+                foreach (Map.Point point in map.points)
                 {
-                    highestIndex = point.tileIndex;
+                    if (point.tileIndex > highestIndex)
+                    {
+                        highestIndex = point.tileIndex;
+                    }
                 }
             }
             minRows = Mathf.FloorToInt(highestIndex / map.tilesColumns) + 1;
@@ -167,11 +176,14 @@ namespace PadTap.MapMaker
         private void ChangeMinColumns(int columns)
         {
             int highestColumnUsed = 0;
-            foreach (Map.Point point in map.points)
+            if (map.points != null)
             {
-                if (point.tileIndex % map.tilesColumns > highestColumnUsed)
+                foreach (Map.Point point in map.points)
                 {
-                    highestColumnUsed = point.tileIndex % map.tilesColumns;
+                    if (point.tileIndex % map.tilesColumns > highestColumnUsed)
+                    {
+                        highestColumnUsed = point.tileIndex % map.tilesColumns;
+                    }
                 }
             }
             minColumns = highestColumnUsed + 1;
@@ -179,10 +191,13 @@ namespace PadTap.MapMaker
 
         private void ChangeIndexes(int previousColumns)
         {
-            int deltaColumn = map.tilesColumns - previousColumns;
-            foreach (Map.Point point in map.points)
+            if (map.points != null)
             {
-                point.tileIndex += Mathf.FloorToInt(point.tileIndex / previousColumns) * deltaColumn;
+                int deltaColumn = map.tilesColumns - previousColumns;
+                foreach (Map.Point point in map.points)
+                {
+                    point.tileIndex += Mathf.FloorToInt(point.tileIndex / previousColumns) * deltaColumn;
+                }
             }
         }
 
@@ -192,14 +207,14 @@ namespace PadTap.MapMaker
             MakeSureAudioSourceDoesntReset();
             if (GUILayout.Button("Play"))
             {
-                Play();
+                PlayMusic();
             }
             if (GUILayout.Button("Pause"))
             {
-                Pause();
+                PauseMusic();
             }
             EditorGUILayout.EndHorizontal();
-            audioSource.time = EditorGUILayout.Slider(audioSource.time, 0, map.song.length);
+            UpdateTime(currentTime);
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Back"))
             {
@@ -245,7 +260,7 @@ namespace PadTap.MapMaker
                 EditorGUILayout.BeginHorizontal(TilesHorizontalCenter());
                 for (int j = 0; j < map.tilesColumns; j++)
                 {
-                    if (GUILayout.Button(GetTileIndex(i, j).ToString(), skin.button))
+                    if (skin != null && GUILayout.Button(GetTileIndex(i, j).ToString(), skin.button))
                     {
                         AddPoint(GetTileIndex(i, j));
                     }
@@ -283,44 +298,62 @@ namespace PadTap.MapMaker
 
         private void ResetMap()
         {
+            map.ResetMap();
             givenCopyright = false;
-            map.copyright = "";
-            map.tilesRows = 4;
-            map.tilesColumns = 4;
-            audioSource.time = 0;
-            map.mapName = "";
+            UpdateTime(0);
+            PauseMusic();
             deltaTime = 1;
-            map.threshold = .8f;
-            map.indicatorLifespan = 2;
-            map.points = new List<Map.Point>();
         }
 
         private void MakeSureAudioSourceDoesntReset()
         {
-            if (!audioSource.isPlaying)
+            if (audioSource!=null && !audioSource.isPlaying)
             {
                 audioSource.Play();
                 audioSource.Pause();
             }
         }
 
-        private void Play()
+        private void PlayMusic()
         {
-            if (!audioSource.isPlaying)
+            if (audioSource!=null && !audioSource.isPlaying)
             {
                 audioSource.clip = map.song;
                 audioSource.Play();
             }
         }
 
-        private void Pause()
+        private void PauseMusic()
         {
-            audioSource.Pause();
+            if (audioSource != null)
+            {
+                audioSource.Pause();
+            }
+        }
+
+        private void UpdateTime(float newTime)
+        {
+            float previousTime = currentTime;
+            if (map != null && map.song != null)
+            {
+                currentTime = EditorGUILayout.Slider(newTime, 0, map.song.length);
+            }
+            if (audioSource != null)
+            {
+                if (previousTime != currentTime)
+                {
+                    audioSource.time = currentTime;
+                }
+                if (audioSource.isPlaying)
+                {
+                    currentTime = audioSource.time;
+                }
+            }
         }
 
         private void MoveTime(float deltaTime)
         {
-            audioSource.time = Mathf.Clamp(audioSource.time + deltaTime, 0, map.song.length - deltaTime);
+            UpdateTime(Mathf.Clamp(currentTime + deltaTime, 0, map.song.length - deltaTime));
         }
 
         private void MakePointsDropdown(Rect pointsManager)
@@ -329,29 +362,36 @@ namespace PadTap.MapMaker
             string chosen = GetCurrentPointsTime();
             if (EditorGUILayout.DropdownButton(new GUIContent(chosen), FocusType.Keyboard))
             {
-                ShowDropdown(pointsManager, map.points, currentPoint);
+                if (map.points != null && pointsManager != null && currentPoint != null)
+                {
+                    ShowDropdown(pointsManager, map.points, currentPoint);
+                }
             }
         }
 
         private void SetCurrentPointFromCurrentTime()
         {
-            if (map.points.Count > 0)
+            if (map.points!=null && map.points.Count > 0)
             {
                 currentPoint = map.points[0];
                 foreach (Map.Point point in map.points)
                 {
-                    if (point.time <= audioSource.time)
+                    if (point.time <= currentTime)
                     {
                         currentPoint = point;
                     }
                 }
+            }
+            else
+            {
+                currentPoint = null;
             }
         }
 
         private string GetCurrentPointsTime()
         {
             string chosen = "-";
-            if (map.points.Count != 0)
+            if (currentPoint!=null)
             {
                 chosen = currentPoint.time.ToString();
             }
@@ -367,30 +407,39 @@ namespace PadTap.MapMaker
 
         private void PreviousPoint()
         {
-            if (audioSource.time > currentPoint.time)
+            if (currentPoint != null && map.points!=null)
             {
-                ChangeCurrentPoint(map.points.IndexOf(currentPoint));
-            }
-            else
-            {
-                ChangeCurrentPoint(map.points.IndexOf(currentPoint) - 1);
+                if (currentTime > currentPoint.time)
+                {
+                    ChangeCurrentPoint(map.points.IndexOf(currentPoint));
+                }
+                else
+                {
+                    ChangeCurrentPoint(map.points.IndexOf(currentPoint) - 1);
+                }
             }
         }
 
         private void NextPoint()
         {
-            ChangeCurrentPoint(map.points.IndexOf(currentPoint) + 1);
+            if (currentPoint != null && map.points !=null)
+            {
+                ChangeCurrentPoint(map.points.IndexOf(currentPoint) + 1);
+            }
         }
 
         private void DeletePoint(Map.Point point)
         {
-            int previousIndex = map.points.IndexOf(point) - 1;
-            if (previousIndex < 0)
+            if (map.points != null)
             {
-                previousIndex = 0;
+                int previousIndex = map.points.IndexOf(point) - 1;
+                if (previousIndex < 0)
+                {
+                    previousIndex = 0;
+                }
+                map.points.Remove(point);
+                ChangeCurrentPoint(previousIndex);
             }
-            map.points.Remove(point);
-            ChangeCurrentPoint(previousIndex);
         }
 
         private void ClearPoints()
@@ -401,25 +450,30 @@ namespace PadTap.MapMaker
 
         private void ChangeCurrentPoint(int indexInList)
         {
-            if (map.points.Count != 0)
+            if (map.points != null && map.points.Count != 0)
             {
                 indexInList = Mathf.Clamp(indexInList, 0, map.points.Count - 1);
                 currentPoint = map.points[indexInList];
-                ChangeCurrentTime(currentPoint.time);
             }
-        }
-
-        private void ChangeCurrentTime(float time)
-        {
-            time = Mathf.Clamp(time, 0, map.song.length);
-            audioSource.time = time;
+            if (currentPoint != null)
+            {
+                UpdateTime(currentPoint.time);
+            }
         }
 
         private GUIStyle TilesHorizontalCenter()
         {
-            GUIStyle center = skin.GetStyle("Center");
-            GUIStyle tileButton = skin.button;
-            center.padding.left = (int)((windowSize.x - map.tilesColumns * (tileButton.fixedWidth + tileButton.margin.left)) / 2);
+            GUIStyle center = new GUIStyle();
+            if (skin != null)
+            {
+                center = skin.GetStyle("Center");
+                if (center == null)
+                {
+                    center = skin.button;
+                }
+                GUIStyle tileButton = skin.button;
+                center.padding.left = (int)((windowSize.x - map.tilesColumns * (tileButton.fixedWidth + tileButton.margin.left)) / 2);
+            }
             return center;
         }
 
@@ -436,12 +490,12 @@ namespace PadTap.MapMaker
             }
             foreach (Map.Point point in map.points)
             {
-                if (point.time == audioSource.time)
+                if (point.time == currentTime)
                 {
                     return;
                 }
             }
-            Map.Point newPoint = new Map.Point(audioSource.time, tileIndex);
+            Map.Point newPoint = new Map.Point(currentTime, tileIndex);
             map.points.Add(newPoint);
             map.points.Sort();
         }
@@ -469,9 +523,12 @@ namespace PadTap.MapMaker
                 newInstance.tilesColumns = map.tilesColumns;
                 newInstance.tilesRows = map.tilesRows;
                 newInstance.points = new List<Map.Point>();
-                foreach (Map.Point point in map.points)
+                if (map.points != null)
                 {
-                    newInstance.points.Add(new Map.Point(point.time, point.tileIndex));
+                    foreach (Map.Point point in map.points)
+                    {
+                        newInstance.points.Add(new Map.Point(point.time, point.tileIndex));
+                    }
                 }
                 map = newInstance;
             }
@@ -507,20 +564,22 @@ namespace PadTap.MapMaker
             private Map.Point currentPoint;
 
             private Vector2 scrollPosition = Vector2.zero;
+            private float scrollWidth = 25;
+            private Vector2 size = new Vector2(150, 300);
 
             public override void OnGUI(Rect rect)
             {
-                editorWindow.minSize = new Vector2(150, 0);
-                editorWindow.maxSize = new Vector2(150, 300);
+                editorWindow.minSize = size;
+                editorWindow.maxSize = size;
                 DrawDropdown();
             }
 
             private void DrawDropdown()
             {
-                scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.Width(150));
+                scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.Width(size.x));
                 for (int i = 0; i < points.Count; i++)
                 {
-                    if (EditorGUILayout.ToggleLeft(points[i].time.ToString(), points[i].time == currentPoint.time, GUILayout.Width(100)))
+                    if (EditorGUILayout.ToggleLeft(points[i].time.ToString(), points[i].time == currentPoint.time, GUILayout.Width(size.x - scrollWidth)))
                     {
                         SelectPoint(i);
                     }

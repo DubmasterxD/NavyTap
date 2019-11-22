@@ -4,12 +4,7 @@ namespace PadTap.MapMaker
 {
     public class TimelinePoint : MonoBehaviour
     {
-        RectTransform rect = null;
-
-        private void Awake()
-        {
-            rect = GetComponent<RectTransform>();
-        }
+        [SerializeField] RectTransform rect = null;
 
         public void SetPoint(float positionOnTimeline)
         {

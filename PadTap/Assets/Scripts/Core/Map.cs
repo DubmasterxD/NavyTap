@@ -9,8 +9,8 @@ namespace PadTap.Core
     {
         public int tilesRows = 4;
         public int tilesColumns = 4;
-        public float threshold = .8f;
-        public float indicatorLifespan = 2;
+        public float threshold = 0.5f;
+        public float indicatorLifespan = 1;
         public List<Point> points = null;
         public AudioClip song = null;
         public string mapName = "";
@@ -50,6 +50,17 @@ namespace PadTap.Core
         public float GetPerfectScoreAcceptableDifference()
         {
             return (1 - threshold) / 6;
+        }
+
+        public void ResetMap()
+        {
+            tilesRows = 4;
+            tilesColumns = 4;
+            threshold = 0.5f;
+            indicatorLifespan = 1;
+            points = new List<Point>();
+            mapName = "";
+            copyright = "";
         }
     }
 }
