@@ -13,6 +13,10 @@ namespace PadTap.Maps
         {
             spawner = FindObjectOfType<IndicatorSpawner>();
             animator = GetComponent<Animator>();
+            if(spawner == null)
+            {
+                Debug.LogError("No object with " + typeof(IndicatorSpawner) + " component found!\n");
+            }
         }
 
         public void StartIndicator(float lifespan)
@@ -31,7 +35,10 @@ namespace PadTap.Maps
         public void ChangeAnimatorSpeedFromLifespan(float lifespan)
         {
             animator.StartPlayback();
-            animator.speed = 1 / lifespan;
+            if (lifespan > 0)
+            {
+                animator.speed = 1 / lifespan;
+            }
         }
 
         private void GameOver()
@@ -41,7 +48,7 @@ namespace PadTap.Maps
 
         public void Click()
         {
-            if (TimeAlive() > spawner.map.threshold)
+            if (spawner != null && TimeAlive() > spawner.map.threshold)
             {
                 //TODO Points
             }

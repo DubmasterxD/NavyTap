@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 
-public class TileManager : MonoBehaviour
+namespace PadTap.MapMaker
 {
+    public class TileManager : MonoBehaviour
+    {
 
+    }
 }

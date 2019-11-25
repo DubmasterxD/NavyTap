@@ -8,7 +8,13 @@ namespace PadTap.MapMaker
 
         public void SetPoint(float positionOnTimeline)
         {
-            rect.localPosition = new Vector3(positionOnTimeline, 0);
+            if (rect != null)
+            {
+                rect.localPosition = new Vector3(positionOnTimeline, 0);
+            }
+            else
+            {
+            }
         }
     }
 }

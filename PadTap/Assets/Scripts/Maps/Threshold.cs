@@ -10,15 +10,27 @@ namespace PadTap.Maps
 
         public void SetThreshold(float newThreshold)
         {
-            threshold.localScale = new Vector3(newThreshold, newThreshold, newThreshold);
+            SetScaleOfTransform(threshold, newThreshold);
         }
 
-        public void SetPerfectScore(float newPerfectScore, float newPerfectScoreDifference)
+        public void SetPerfectScoreLimits(float newPerfectScore, float newPerfectScoreDifference)
         {
             float newMaxPerfectScore = newPerfectScore + newPerfectScoreDifference;
+            SetScaleOfTransform(perfectScoreMax, newMaxPerfectScore);
             float newMinPerfectScore = newPerfectScore - newPerfectScoreDifference;
-            perfectScoreMax.localScale = new Vector3(newMaxPerfectScore, newMaxPerfectScore, newMaxPerfectScore);
-            perfectScoreMin.localScale = new Vector3(newMinPerfectScore, newMinPerfectScore, newMinPerfectScore);
+            SetScaleOfTransform(perfectScoreMin, newMinPerfectScore);
+        }
+
+        private void SetScaleOfTransform(Transform transform, float newScale)
+        {
+            try
+            {
+                transform.localScale = new Vector3(newScale, newScale, newScale);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("No " + typeof(Transform) + " assigned to " + GetType() + " in " + name + "\n" + e);
+            }
         }
     }
 }

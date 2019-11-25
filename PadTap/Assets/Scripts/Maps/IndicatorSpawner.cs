@@ -1,9 +1,11 @@
 ﻿using PadTap.Core;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace PadTap.Maps
 {
+    [RequireComponent(typeof(TileSpawner))]
     public class IndicatorSpawner : MonoBehaviour
     {
         [SerializeField] private Indicator indicatorPrefab = null;
@@ -18,23 +20,40 @@ namespace PadTap.Maps
         {
             game = FindObjectOfType<Game>();
             tileSpawner = GetComponent<TileSpawner>();
+            if (game == null)
+            {
+                Debug.LogError("No object with " + typeof(Game) + " component found!");
+            }
         }
 
         private void OnEnable()
         {
-            game.onGameStart += StartGame;
+            if (game != null)
+            {
+                game.onGameStart += StartGame;
+            }
         }
 
         private void OnDisable()
         {
-            game.onGameStart -= StartGame;
+            if (game != null)
+            {
+                game.onGameStart -= StartGame;
+            }
         }
 
-        public void StartGame(Map map)
+        public void StartGame(Map newMap)
         {
-            this.map = map;
+            map = newMap;
             spawning = StartCoroutine(SpawnContinuously());
-            StartCoroutine(PlaySong(map.song));
+            try
+            {
+                StartCoroutine(PlaySong(map.song));
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("No " + typeof(Map) + " passed to " + GetType() + " in " + name + "\n" + e);
+            }
         }
 
         public void GameOver()
@@ -45,29 +64,46 @@ namespace PadTap.Maps
 
         private IEnumerator SpawnContinuously()
         {
-            int index = 0;
-            while (index<map.points.Count)
+            if (map != null)
             {
-                yield return WaitToSpawnIndicator(index);
-                int tileIndexToSpawn = map.points[index].tileIndex;
-                tileSpawner.tiles[tileIndexToSpawn].Spawn(indicatorPrefab, map.indicatorLifespan);
-                index++;
+                int index = 0;
+                while (index < map.GetPointsCount())
+                {
+                    yield return WaitToSpawnIndicator(index);
+                    int tileIndexToSpawn = map.points[index].tileIndex;
+                    if (indicatorPrefab != null)
+                    {
+                        tileSpawner.tiles[tileIndexToSpawn].Spawn(indicatorPrefab, map.indicatorLifespan);
+                    }
+                    index++;
+                }
+            }
+            else
+            {
+                Debug.LogError("No " + typeof(Map) + " assigned to " + GetType() + " in " + name);
             }
         }
 
         private IEnumerator WaitToSpawnIndicator(int index)
         {
-            if (index != 0)
+            if (map != null)
             {
-                float previousTime =  map.points[index - 1].time;
-                yield return new WaitForSeconds(map.points[index].time - previousTime);
+                if (index != 0)
+                {
+                    float previousTime = map.points[index - 1].time;
+                    yield return new WaitForSeconds(map.points[index].time - previousTime);
+                }
+                else
+                {
+                    if (GetFirstIndicatorSpawnTime() > 0)
+                    {
+                        yield return new WaitForSeconds(GetFirstIndicatorSpawnTime());
+                    }
+                }
             }
             else
             {
-                if (GetFirstIndicatorSpawnTime() > 0)
-                {
-                    yield return new WaitForSeconds(GetFirstIndicatorSpawnTime());
-                }
+                Debug.LogError("No " + typeof(Map) + " assigned to " + GetType() + " in " + name);
             }
         }
 
@@ -78,13 +114,24 @@ namespace PadTap.Maps
                 yield return new WaitForSeconds(-GetFirstIndicatorSpawnTime());
             }
             FindObjectOfType<Audio>().Play(song);
-            yield return new WaitForSeconds(map.song.length);
+            if (map != null)
+            {
+                yield return new WaitForSeconds(map.song.length);
+            }
             GameOver();
         }
 
         private float GetFirstIndicatorSpawnTime()
         {
-            return map.points[0].time - map.GetPerfectScore() * map.indicatorLifespan;
+            if (map != null)
+            {
+                return map.points[0].time - map.GetPerfectScore() * map.indicatorLifespan;
+            }
+            else
+            {
+                Debug.LogError("No " + typeof(Map) + " assigned to " + GetType() + " in " + name);
+                return 0;
+            }
         }
     }
 }

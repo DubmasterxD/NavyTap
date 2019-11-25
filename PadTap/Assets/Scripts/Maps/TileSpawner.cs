@@ -1,5 +1,4 @@
 ﻿using PadTap.Core;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,6 +18,10 @@ namespace PadTap.Maps
         private void Awake()
         {
             game = FindObjectOfType<Game>();
+            if (game == null)
+            {
+                Debug.LogError("No object with " + typeof(Game) + " component found!");
+            }
         }
 
         private void OnEnable()
@@ -33,27 +36,41 @@ namespace PadTap.Maps
 
         private void StartGame(Map map)
         {
-            ShowTiles(map.tilesRows, map.tilesColumns);
-            SetThresholds(map.threshold, map.GetPerfectScore(), map.GetPerfectScoreAcceptableDifference());
+            if (map != null)
+            {
+                ShowTiles(map.tilesRows, map.tilesColumns);
+                SetThresholds(map.threshold, map.GetPerfectScore(), map.GetPerfectScoreAcceptableDifference());
+            }
+            else
+            {
+                Debug.LogError("No " + typeof(Map) + " received in " + GetType() + " in" + name);
+            }
         }
 
         public void ShowTiles(int rows, int columns)
         {
             CreateList(rows * columns);
-            tileSize = mapSize / Mathf.Max(rows, columns);
-            for (int row = 0; row < rows; row++)
+            if (rows > 0 && columns > 0)
             {
-                for (int column = 0; column < columns; column++)
+                tileSize = mapSize / Mathf.Max(rows, columns);
+                for (int row = 0; row < rows; row++)
                 {
-                    int index = column + row * columns;
-                    tiles[index].gameObject.SetActive(true);
-                    tiles[index].transform.localScale = new Vector3(tileSize / originalTileSize, tileSize / originalTileSize, tileSize / originalTileSize);
-                    float posX = -mapSize / 2 + tileSize * column;
-                    posX += mapSize / 2 * (1 - Mathf.Clamp01(columns / (float)rows));
-                    float posY = mapSize / 2 - tileSize * row;
-                    posY -= mapSize / 2 * (1 - Mathf.Clamp01(rows / (float)columns));
-                    tiles[index].transform.position = new Vector3(posX, posY);
+                    for (int column = 0; column < columns; column++)
+                    {
+                        int index = column + row * columns;
+                        tiles[index].gameObject.SetActive(true);
+                        tiles[index].transform.localScale = new Vector3(tileSize / originalTileSize, tileSize / originalTileSize, tileSize / originalTileSize);
+                        float posX = -mapSize / 2 + tileSize * column;
+                        posX += mapSize / 2 * (1 - Mathf.Clamp01(columns / (float)rows));
+                        float posY = mapSize / 2 - tileSize * row;
+                        posY -= mapSize / 2 * (1 - Mathf.Clamp01(rows / (float)columns));
+                        tiles[index].transform.position = new Vector3(posX, posY);
+                    }
                 }
+            }
+            else
+            {
+                Debug.LogError("Wrong number of rows and/or columns received in " + GetType() + " in " + name);
             }
         }
 
@@ -65,9 +82,16 @@ namespace PadTap.Maps
             }
             if (tiles.Count < size)
             {
-                for (int i = tiles.Count; i < size; i++)
+                if (tilePrefab != null)
                 {
-                    tiles.Add(Instantiate(tilePrefab, transform));
+                    for (int i = tiles.Count; i < size; i++)
+                    {
+                        tiles.Add(Instantiate(tilePrefab, transform));
+                    }
+                }
+                else
+                {
+                    Debug.LogError("No " + typeof(Tile) + " assigned to " + GetType() + " in " + name);
                 }
             }
             foreach (Tile tile in tiles)
@@ -82,10 +106,17 @@ namespace PadTap.Maps
 
         private void SetThresholds(float threshold, float perferctScore, float perfectScoreDifference)
         {
-            foreach (Tile tile in tiles)
+            if (tiles != null)
             {
-                tile.SetThreshold(threshold);
-                tile.SetPerfectScore(perferctScore, perfectScoreDifference);
+                foreach (Tile tile in tiles)
+                {
+                    tile.SetThreshold(threshold);
+                    tile.SetPerfectScore(perferctScore, perfectScoreDifference);
+                }
+            }
+            else
+            {
+                Debug.LogError("No " + typeof(List<Tile>) + " created in " + GetType() + " in " + name);
             }
         }
     }

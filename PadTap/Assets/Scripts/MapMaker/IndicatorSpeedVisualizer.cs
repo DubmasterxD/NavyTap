@@ -20,7 +20,7 @@ namespace PadTap.MapMaker
         {
             if (threshold != null)
             {
-                threshold.SetPerfectScore(perfectScore, perfectScoreDifference);
+                threshold.SetPerfectScoreLimits(perfectScore, perfectScoreDifference);
             }
         }
 

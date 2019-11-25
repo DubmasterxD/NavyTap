@@ -23,7 +23,6 @@ namespace PadTap.MapMaker
         private Map map = null;
         private Map.Point currentPoint = null;
         private float currentTime = 0;
-        private bool isPlaying = false;
         private float deltaTime = 1;
         private bool givenCopyright = false;
 
@@ -59,17 +58,20 @@ namespace PadTap.MapMaker
             if (map != null)
             {
                 DrawSongSelection();
-                if (!givenCopyright)
+                if (map.song != null)
                 {
-                    DrawCopyright();
-                }
-                else
-                {
-                    DrawMapSettings();
-                    DrawMusicPlayer();
-                    DrawPointsManager();
-                    DrawTiles();
-                    DrawMapSave();
+                    if (!givenCopyright)
+                    {
+                        DrawCopyright();
+                    }
+                    else
+                    {
+                        DrawMapSettings();
+                        DrawMusicPlayer();
+                        DrawPointsManager();
+                        DrawTiles();
+                        DrawMapSave();
+                    }
                 }
             }
             DrawMapLoad();

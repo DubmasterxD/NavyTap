@@ -9,7 +9,15 @@ namespace PadTap.Menu
 
         public void ChooseMap()
         {
-            FindObjectOfType<Scene>().LoadMap(map);
+            Scene scene = FindObjectOfType<Scene>();
+            try
+            {
+                scene.LoadMap(map);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("No object with " + typeof(Scene) + " component found!\n" + e);
+            }
         }
     }
 }

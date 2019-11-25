@@ -9,26 +9,38 @@ namespace PadTap.Maps
 
         public void SetThreshold(float value)
         {
-            if (threshold != null)
+            try
             {
                 threshold.SetThreshold(value);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("No " + typeof(Threshold) + " assigned to " + GetType() + " in " + name + "\n" + e);
             }
         }
 
         public void SetPerfectScore(float perfectScore, float perfectScoreDifference)
         {
-            if (threshold != null)
+            try
             {
-                threshold.SetPerfectScore(perfectScore, perfectScoreDifference);
+                threshold.SetPerfectScoreLimits(perfectScore, perfectScoreDifference);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("No " + typeof(Threshold) + " assigned to " + GetType() + " in " + name + "\n" + e);
             }
         }
 
         public void Spawn(Indicator toSpawn, float lifespan)
         {
-            if (spawnPoint != null)
+            try
             {
                 Indicator indicator = Instantiate(toSpawn, spawnPoint);
                 indicator.StartIndicator(lifespan);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("No " + typeof(Transform) + " assigned to " + GetType() + " in " + name + "\n" + e);
             }
         }
     }

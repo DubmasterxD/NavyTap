@@ -30,14 +30,21 @@ namespace PadTap.Core
 
             public int CompareTo(object obj)
             {
-                Point point = (Point)obj;
-                if (point.time > time)
+                if (obj != null)
                 {
-                    return -1;
+                    Point point = (Point)obj;
+                    if (point.time > time)
+                    {
+                        return -1;
+                    }
+                    else
+                    {
+                        return 1;
+                    }
                 }
                 else
                 {
-                    return 1;
+                    return 0;
                 }
             }
         }
@@ -61,6 +68,19 @@ namespace PadTap.Core
             points = new List<Point>();
             mapName = "";
             copyright = "";
+        }
+
+        public int GetPointsCount()
+        {
+            if (points != null)
+            {
+                return points.Count;
+            }
+            else
+            {
+                Debug.LogError("No " + typeof(List<Point>) + " assigned to " + GetType() + " in " + name);
+                return 0;
+            }
         }
     }
 }

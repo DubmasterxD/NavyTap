@@ -14,8 +14,15 @@ namespace PadTap.Maps
 
         public void Play(AudioClip song)
         {
-            audioSource.clip = song;
-            audioSource.Play();
+            if (song != null)
+            {
+                audioSource.clip = song;
+                audioSource.Play();
+            }
+            else
+            {
+                Debug.LogWarning("No " + typeof(AudioClip) + " received for " + GetType() + " in " + name);
+            }
         }
     }
 }
