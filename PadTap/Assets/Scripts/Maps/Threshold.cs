@@ -23,13 +23,13 @@ namespace PadTap.Maps
 
         private void SetScaleOfTransform(Transform transform, float newScale)
         {
-            try
+            if (transform != null)
             {
                 transform.localScale = new Vector3(newScale, newScale, newScale);
             }
-            catch (System.Exception e)
+            else
             {
-                Debug.LogError("No " + typeof(Transform) + " assigned to " + GetType() + " in " + name + "\n" + e);
+                Logger.NotAssigned(typeof(Transform), GetType(), name);
             }
         }
     }

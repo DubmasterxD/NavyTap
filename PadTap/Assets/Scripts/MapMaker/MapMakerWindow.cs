@@ -92,7 +92,7 @@ namespace PadTap.MapMaker
                 visualizationManager = FindObjectOfType<MapMakerVisualizerManager>();
                 if (visualizationManager == null)
                 {
-                    Debug.LogWarning("No MapMakerManager found!");
+                    Logger.NoComponentFound(typeof(MapMakerVisualizerManager));
                 }
             }
         }
@@ -114,7 +114,7 @@ namespace PadTap.MapMaker
                 audioSource = FindObjectOfType<AudioSource>();
                 if (audioSource == null)
                 {
-                    Debug.LogError("No AudioSource found!");
+                    Logger.NoComponentFound(typeof(AudioSource));
                 }
             }
         }

@@ -10,7 +10,14 @@ namespace PadTap.MapMaker
 
         public void ChangeSpeedFromFilespan(float lifespan)
         {
-            indicatorSpeed = 1 / lifespan;
+            if (lifespan != 0)
+            {
+                indicatorSpeed = 1 / lifespan;
+            }
+            else
+            {
+                indicatorSpeed = 0;
+            }
         }
 
         public void AnimateIndicator(float deltaTime)
@@ -23,6 +30,10 @@ namespace PadTap.MapMaker
                     indicatorTime -= 1;
                 }
                 spriteRenderer.transform.localScale = new Vector3(indicatorTime, indicatorTime, indicatorTime);
+            }
+            else
+            {
+                Logger.NotAssigned(typeof(SpriteRenderer), GetType(), name);
             }
         }
 

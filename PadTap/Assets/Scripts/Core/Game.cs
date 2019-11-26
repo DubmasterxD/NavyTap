@@ -34,13 +34,13 @@ namespace PadTap.Core
         public void GameOver()
         {
             Scene scene = FindObjectOfType<Scene>();
-            try
+            if (scene != null)
             {
                 scene.LoadMenu();
             }
-            catch (System.Exception e)
+            else
             {
-                Debug.LogError("No object with " + typeof(Scene) + " component found!\n" + e);
+                Logger.NoComponentFound(typeof(Scene));
             }
         }
     }

@@ -14,6 +14,7 @@ namespace PadTap.MapMaker
             }
             else
             {
+                Logger.NotAssigned(typeof(RectTransform), GetType(), name);
             }
         }
     }

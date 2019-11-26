@@ -15,7 +15,7 @@ namespace PadTap.Maps
             animator = GetComponent<Animator>();
             if(spawner == null)
             {
-                Debug.LogError("No object with " + typeof(IndicatorSpawner) + " component found!\n");
+                Logger.NoComponentFound(typeof(IndicatorSpawner));
             }
         }
 

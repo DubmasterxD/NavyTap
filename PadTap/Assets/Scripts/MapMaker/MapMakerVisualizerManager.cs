@@ -25,6 +25,10 @@ namespace PadTap.MapMaker
             {
                 tileSpawner.ShowTiles(rows, columns);
             }
+            else
+            {
+                Logger.NotAssigned(typeof(TileSpawner), GetType(), name);
+            }
         }
 
         public void ChageThreshold(float threshold)
@@ -32,6 +36,10 @@ namespace PadTap.MapMaker
             if (indicatorSpeedVisualizer != null)
             {
                 indicatorSpeedVisualizer.ChangeThreshold(threshold);
+            }
+            else
+            {
+                Logger.NotAssigned(typeof(IndicatorSpeedVisualizer), GetType(), name);
             }
         }
 
@@ -41,6 +49,10 @@ namespace PadTap.MapMaker
             {
                 indicatorSpeedVisualizer.ChangePerfectScore(perfectScore, perfectScoreDifference);
             }
+            else
+            {
+                Logger.NotAssigned(typeof(IndicatorSpeedVisualizer), GetType(), name);
+            }
         }
 
         public void ChangeSpeedFromFilespan(float lifespan)
@@ -48,6 +60,10 @@ namespace PadTap.MapMaker
             if (indicatorSpeedVisualizer != null)
             {
                 indicatorSpeedVisualizer.ChangeSpeedFromFilespan(lifespan);
+            }
+            else
+            {
+                Logger.NotAssigned(typeof(IndicatorSpeedVisualizer), GetType(), name);
             }
         }
 
@@ -57,6 +73,10 @@ namespace PadTap.MapMaker
             {
                 indicatorSpeedVisualizer.AnimateIndicator(deltaTime);
             }
+            else
+            {
+                Logger.NotAssigned(typeof(IndicatorSpeedVisualizer), GetType(), name);
+            }
         }
 
         public void ResetPoints()
@@ -64,6 +84,10 @@ namespace PadTap.MapMaker
             if (timeline != null)
             {
                 timeline.ClearList();
+            }
+            else
+            {
+                Logger.NotAssigned(typeof(Timeline), GetType(), name);
             }
         }
 
@@ -73,6 +97,10 @@ namespace PadTap.MapMaker
             {
                 timeline.AddPoint(timePercentage);
             }
+            else
+            {
+                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+            }
         }
 
         public void ZoomIn()
@@ -81,6 +109,10 @@ namespace PadTap.MapMaker
             {
                 timeline.ZoomIn();
             }
+            else
+            {
+                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+            }
         }
 
         public void ZoomOut()
@@ -88,6 +120,10 @@ namespace PadTap.MapMaker
             if (timeline != null)
             {
                 timeline.ZoomOut();
+            }
+            else
+            {
+                Logger.NotAssigned(typeof(Timeline), GetType(), name);
             }
         }
     }

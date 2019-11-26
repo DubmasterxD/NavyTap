@@ -25,6 +25,17 @@ namespace PadTap.MapMaker
                 point.SetPoint(positionOnTimeline);
                 points.Add(point);
             }
+            else
+            {
+                if(pointPrefab == null)
+                {
+                    Logger.NotAssigned(typeof(TimelinePoint), GetType(), name);
+                }
+                if(rect == null)
+                {
+                    Logger.NotAssigned(typeof(RectTransform), GetType(), name);
+                }
+            }
         }
 
         public void ClearList()

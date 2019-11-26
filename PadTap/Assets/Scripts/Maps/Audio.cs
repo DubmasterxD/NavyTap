@@ -21,7 +21,7 @@ namespace PadTap.Maps
             }
             else
             {
-                Debug.LogWarning("No " + typeof(AudioClip) + " received for " + GetType() + " in " + name);
+                Debug.LogWarning(typeof(AudioClip) + " received is null");
             }
         }
     }

@@ -1,6 +1,5 @@
 ﻿using PadTap.Core;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace PadTap.Maps
@@ -22,7 +21,7 @@ namespace PadTap.Maps
             tileSpawner = GetComponent<TileSpawner>();
             if (game == null)
             {
-                Debug.LogError("No object with " + typeof(Game) + " component found!");
+                Logger.NoComponentFound(typeof(Game));
             }
         }
 
@@ -46,13 +45,13 @@ namespace PadTap.Maps
         {
             map = newMap;
             spawning = StartCoroutine(SpawnContinuously());
-            try
+            if(map!=null)
             {
                 StartCoroutine(PlaySong(map.song));
             }
-            catch (System.Exception e)
+            else
             {
-                Debug.LogError("No " + typeof(Map) + " passed to " + GetType() + " in " + name + "\n" + e);
+                Debug.LogError(typeof(Map) + " received is null");
             }
         }
 
@@ -80,7 +79,7 @@ namespace PadTap.Maps
             }
             else
             {
-                Debug.LogError("No " + typeof(Map) + " assigned to " + GetType() + " in " + name);
+                Logger.NotAssigned(typeof(Map), GetType(), name);
             }
         }
 
@@ -103,7 +102,7 @@ namespace PadTap.Maps
             }
             else
             {
-                Debug.LogError("No " + typeof(Map) + " assigned to " + GetType() + " in " + name);
+                Logger.NotAssigned(typeof(Map), GetType(), name);
             }
         }
 
@@ -129,7 +128,7 @@ namespace PadTap.Maps
             }
             else
             {
-                Debug.LogError("No " + typeof(Map) + " assigned to " + GetType() + " in " + name);
+                Logger.NotAssigned(typeof(Map), GetType(), name);
                 return 0;
             }
         }

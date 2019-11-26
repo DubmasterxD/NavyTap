@@ -20,7 +20,7 @@ namespace PadTap.Maps
             game = FindObjectOfType<Game>();
             if (game == null)
             {
-                Debug.LogError("No object with " + typeof(Game) + " component found!");
+                Logger.NoComponentFound(typeof(Game));
             }
         }
 
@@ -43,7 +43,7 @@ namespace PadTap.Maps
             }
             else
             {
-                Debug.LogError("No " + typeof(Map) + " received in " + GetType() + " in" + name);
+                Debug.LogError(typeof(Map) + " received is null");
             }
         }
 
@@ -70,7 +70,7 @@ namespace PadTap.Maps
             }
             else
             {
-                Debug.LogError("Wrong number of rows and/or columns received in " + GetType() + " in " + name);
+                Debug.LogError("Wrong number of rows and/or columns received");
             }
         }
 
@@ -91,7 +91,7 @@ namespace PadTap.Maps
                 }
                 else
                 {
-                    Debug.LogError("No " + typeof(Tile) + " assigned to " + GetType() + " in " + name);
+                    Logger.NotAssigned(typeof(Tile), GetType(), name);
                 }
             }
             foreach (Tile tile in tiles)
@@ -113,10 +113,6 @@ namespace PadTap.Maps
                     tile.SetThreshold(threshold);
                     tile.SetPerfectScore(perferctScore, perfectScoreDifference);
                 }
-            }
-            else
-            {
-                Debug.LogError("No " + typeof(List<Tile>) + " created in " + GetType() + " in " + name);
             }
         }
     }

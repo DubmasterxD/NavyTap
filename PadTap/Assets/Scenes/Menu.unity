@@ -523,7 +523,7 @@ GameObject:
   - component: {fileID: 1183012065}
   - component: {fileID: 1183012064}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Scene
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -541,6 +541,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 212a6e2d8d08d9642a032b7c91812a3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mapSceneIndex: 1
 --- !u!4 &1183012065
 Transform:
   m_ObjectHideFlags: 0
