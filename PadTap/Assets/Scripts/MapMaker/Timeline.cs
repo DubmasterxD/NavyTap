@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using PadTap.Core;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace PadTap.MapMaker
@@ -7,23 +8,53 @@ namespace PadTap.MapMaker
     {
         [SerializeField] TimelinePoint pointPrefab = null;
         [SerializeField] RectTransform rect = null;
+        
+        Dictionary<Map.Point, TimelinePoint> points = null;
 
-        float zoom = 1;
-        List<TimelinePoint> points = null;
-
-        public void AddPoint(float timePercentage)
+        public void UpdatePoints(Map map)
         {
+            if (map != null && map.points != null && map.song != null)
+            {
+                foreach (Map.Point point in map.points)
+                {
+                    AddPoint(point, map.song.length);
+                }
+                DeleteUnnecesaryPoints(map.points);
+            }
+            else
+            {
+                if (map == null)
+                {
+                    Debug.LogError(typeof(Map) + " received is null");
+                }
+                if (map.points == null)
+                {
+                    Debug.LogError(typeof(List<Map.Point>) + " in " + map.name + " map is null");
+                }
+                if (map.song == null)
+                {
+                    Debug.LogError(typeof(AudioClip) + " in " + map.name + " map is null");
+                }
+            }
+        }
+
+        private void AddPoint(Map.Point point, float songLength)
+        {
+            float timePercentage = point.time / songLength;
             if (pointPrefab != null && rect != null)
             {
                 if (points == null)
                 {
-                    points = new List<TimelinePoint>();
+                    points = new Dictionary<Map.Point, TimelinePoint>();
                 }
-                TimelinePoint point = Instantiate(pointPrefab, transform);
-                float timelineWidth = rect.rect.width * rect.localScale.x;
-                float positionOnTimeline = timePercentage * timelineWidth;
-                point.SetPoint(positionOnTimeline);
-                points.Add(point);
+                if (!points.ContainsKey(point))
+                {
+                    TimelinePoint timelinePoint = Instantiate(pointPrefab, transform);
+                    float timelineWidth = rect.rect.width * rect.localScale.x;
+                    float positionOnTimeline = timePercentage * timelineWidth;
+                    timelinePoint.SetPoint(positionOnTimeline);
+                    points.Add(point, timelinePoint);
+                }
             }
             else
             {
@@ -37,30 +68,41 @@ namespace PadTap.MapMaker
                 }
             }
         }
-
-        public void ClearList()
+        
+        private void DeleteUnnecesaryPoints(List<Map.Point> mapPoints)
         {
-            if (points != null)
+            if (points == null)
             {
-                foreach (TimelinePoint point in points)
+                points = new Dictionary<Map.Point, TimelinePoint>();
+            }
+            if (mapPoints != null)
+            {
+                foreach (Map.Point point in points.Keys)
                 {
-                    Destroy(point);
+                    if (!mapPoints.Contains(point))
+                    {
+                        points[point].DeletePoint();
+                        points.Remove(point);
+                    }
                 }
             }
-            points = new List<TimelinePoint>();
+            else
+            {
+                Debug.LogError(typeof(List<Map.Point>) + " received is null");
+            }
         }
 
         public void ZoomIn()
         {
-            zoom *= 2;
+            rect.localScale *= 2;
             RefreshPoints(2);
         }
 
         public void ZoomOut()
         {
-            if (zoom != 1)
+            if (rect.localScale != Vector3.one)
             {
-                zoom /= 2;
+                rect.localScale /= 2;
                 RefreshPoints(.5f);
             }
         }
@@ -69,7 +111,7 @@ namespace PadTap.MapMaker
         {
             if (points != null)
             {
-                foreach (TimelinePoint point in points)
+                foreach (TimelinePoint point in points.Values)
                 {
                     float newPosition = point.transform.localPosition.x * zoomDifference;
                     point.SetPoint(newPosition);

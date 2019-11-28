@@ -71,6 +71,7 @@ namespace PadTap.MapMaker
                         DrawPointsManager();
                         DrawTiles();
                         DrawMapSave();
+                        DrawVisualizerOptions();
                     }
                 }
             }
@@ -283,6 +284,11 @@ namespace PadTap.MapMaker
                 SaveMap();
             }
             EditorGUILayout.EndHorizontal();
+        }
+
+        private void DrawVisualizerOptions()
+        {
+
         }
 
         private void DrawMapLoad()

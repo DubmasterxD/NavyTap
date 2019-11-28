@@ -1,5 +1,6 @@
 ﻿using PadTap.Core;
 using PadTap.Maps;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace PadTap.MapMaker
@@ -17,6 +18,7 @@ namespace PadTap.MapMaker
             ChangePerfectScore(map.GetPerfectScore(), map.GetPerfectScoreAcceptableDifference());
             ChangeSpeedFromFilespan(map.indicatorLifespan);
             Animate(deltaTime);
+            UpdatePoints(map);
         }
 
         public void SetVisibleTiles(int rows, int columns)
@@ -79,23 +81,11 @@ namespace PadTap.MapMaker
             }
         }
 
-        public void ResetPoints()
+        public void UpdatePoints(Map map)
         {
             if (timeline != null)
             {
-                timeline.ClearList();
-            }
-            else
-            {
-                Logger.NotAssigned(typeof(Timeline), GetType(), name);
-            }
-        }
-
-        public void CreatePoint(float timePercentage)
-        {
-            if (timeline != null)
-            {
-                timeline.AddPoint(timePercentage);
+                timeline.UpdatePoints(map);
             }
             else
             {

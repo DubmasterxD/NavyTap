@@ -17,5 +17,10 @@ namespace PadTap.MapMaker
                 Logger.NotAssigned(typeof(RectTransform), GetType(), name);
             }
         }
+
+        public void DeletePoint()
+        {
+            Destroy(gameObject);
+        }
     }
 }
