@@ -47,7 +47,7 @@ namespace PadTap.MapMaker
             {
                 Repaint();
             }
-            if (visualizationManager != null && map!=null)
+            if (visualizationManager != null && map != null && map.song != null)
             {
                 visualizationManager.ManualUpdate(map, currentTime, Time.deltaTime);
             }

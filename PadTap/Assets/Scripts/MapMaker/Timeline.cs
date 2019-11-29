@@ -29,11 +29,11 @@ namespace PadTap.MapMaker
                 }
                 if (map.points == null)
                 {
-                    Debug.LogError(typeof(List<Map.Point>) + " in " + map.name + " map is null");
+                    Debug.LogError(typeof(List<Map.Point>) + " in " + map.mapName + " map is null");
                 }
                 if (map.song == null)
                 {
-                    Debug.LogError(typeof(AudioClip) + " in " + map.name + " map is null");
+                    Debug.LogError(typeof(AudioClip) + " in " + map.mapName + " map is null");
                 }
             }
         }
@@ -46,6 +46,10 @@ namespace PadTap.MapMaker
                 if (points == null)
                 {
                     points = new Dictionary<Map.Point, TimelinePoint>();
+                }
+                if(points.ContainsKey(point) && points[point] == null)
+                {
+                    points.Remove(point);
                 }
                 if (!points.ContainsKey(point))
                 {
@@ -68,7 +72,7 @@ namespace PadTap.MapMaker
                 }
             }
         }
-        
+
         private void DeleteUnnecesaryPoints(List<Map.Point> mapPoints)
         {
             if (points == null)
@@ -81,8 +85,18 @@ namespace PadTap.MapMaker
                 {
                     if (!mapPoints.Contains(point))
                     {
-                        points[point].DeletePoint();
+                        TimelinePoint pointToDelete = points[point];
                         points.Remove(point);
+                        pointToDelete.DeletePoint();
+                    }
+                }
+                TimelinePoint[] childs = transform.GetComponentsInChildren<TimelinePoint>();
+                if (childs.Length > points.Count)
+                {
+                    points.Clear();
+                    foreach (TimelinePoint point in childs)
+                    {
+                        point.DeletePoint();
                     }
                 }
             }

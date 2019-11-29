@@ -20,7 +20,7 @@ namespace PadTap.MapMaker
 
         public void DeletePoint()
         {
-            Destroy(gameObject);
+            DestroyImmediate(gameObject);
         }
     }
 }
