@@ -106,18 +106,26 @@ namespace PadTap.MapMaker
             }
         }
 
+        public void UpdateTime(float time, Map map)
+        {
+            float timelineWidth = rect.rect.width * rect.localScale.x;
+            float timePercentage = time / map.song.length;
+            float newPosition = -timePercentage * timelineWidth;
+            transform.localPosition = new Vector3(newPosition, 0, 0);
+        }
+
         public void ZoomIn()
         {
-            rect.localScale *= 2;
-            RefreshPoints(2);
+            rect.localScale = new Vector3(rect.localScale.x * 2, 1, 1);
+            //RefreshPoints(2);
         }
 
         public void ZoomOut()
         {
             if (rect.localScale != Vector3.one)
             {
-                rect.localScale /= 2;
-                RefreshPoints(.5f);
+                rect.localScale = new Vector3(rect.localScale.x / 2, 1, 1);
+                //RefreshPoints(.5f);
             }
         }
 

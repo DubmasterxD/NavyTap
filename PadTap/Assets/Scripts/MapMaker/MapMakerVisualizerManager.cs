@@ -9,6 +9,7 @@ namespace PadTap.MapMaker
     {
         [SerializeField] IndicatorSpeedVisualizer indicatorSpeedVisualizer = null;
         [SerializeField] Timeline timeline = null;
+        [SerializeField] Timeline zoomableTimeline = null;
         [SerializeField] TileSpawner tileSpawner = null;
 
         public void ManualUpdate(Map map, float time, float deltaTime)
@@ -19,6 +20,7 @@ namespace PadTap.MapMaker
             ChangeSpeedFromFilespan(map.indicatorLifespan);
             Animate(deltaTime);
             UpdatePoints(map);
+            UpdateTime(time, map);
         }
 
         public void SetVisibleTiles(int rows, int columns)
@@ -91,13 +93,33 @@ namespace PadTap.MapMaker
             {
                 Logger.NotAssigned(typeof(Timeline), GetType(), name);
             }
+            if (zoomableTimeline != null)
+            {
+                zoomableTimeline.UpdatePoints(map);
+            }
+            else
+            {
+                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+            }
+        }
+
+        public void UpdateTime(float time, Map map)
+        {
+            if (zoomableTimeline != null)
+            {
+                zoomableTimeline.UpdateTime(time, map);
+            }
+            else
+            {
+                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+            }
         }
 
         public void ZoomIn()
         {
-            if (timeline != null)
+            if (zoomableTimeline != null)
             {
-                timeline.ZoomIn();
+                zoomableTimeline.ZoomIn();
             }
             else
             {
@@ -107,9 +129,9 @@ namespace PadTap.MapMaker
 
         public void ZoomOut()
         {
-            if (timeline != null)
+            if (zoomableTimeline != null)
             {
-                timeline.ZoomOut();
+                zoomableTimeline.ZoomOut();
             }
             else
             {

@@ -288,7 +288,17 @@ namespace PadTap.MapMaker
 
         private void DrawVisualizerOptions()
         {
-
+            EditorGUILayout.LabelField("Visualizer Options");
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Zoom In"))
+            {
+                visualizationManager.ZoomIn();
+            }
+            if (GUILayout.Button("Zoom Out"))
+            {
+                visualizationManager.ZoomOut();
+            }
+            EditorGUILayout.EndHorizontal();
         }
 
         private void DrawMapLoad()
