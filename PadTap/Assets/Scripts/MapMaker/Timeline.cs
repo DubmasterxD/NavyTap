@@ -1,5 +1,7 @@
 ﻿using PadTap.Core;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace PadTap.MapMaker
@@ -54,8 +56,7 @@ namespace PadTap.MapMaker
                 if (!points.ContainsKey(point))
                 {
                     TimelinePoint timelinePoint = Instantiate(pointPrefab, transform);
-                    float timelineWidth = rect.rect.width * rect.localScale.x;
-                    float positionOnTimeline = timePercentage * timelineWidth;
+                    float positionOnTimeline = timePercentage * rect.rect.width;
                     timelinePoint.SetPoint(positionOnTimeline);
                     points.Add(point, timelinePoint);
                 }
@@ -117,7 +118,6 @@ namespace PadTap.MapMaker
         public void ZoomIn()
         {
             rect.localScale = new Vector3(rect.localScale.x * 2, 1, 1);
-            //RefreshPoints(2);
         }
 
         public void ZoomOut()
@@ -125,19 +125,37 @@ namespace PadTap.MapMaker
             if (rect.localScale != Vector3.one)
             {
                 rect.localScale = new Vector3(rect.localScale.x / 2, 1, 1);
-                //RefreshPoints(.5f);
             }
         }
 
-        public void RefreshPoints(float zoomDifference)
+        public void CreateAudioWaveform(AudioClip song)
         {
-            if (points != null)
+            StartCoroutine(CreateAudioWaveformc(song));
+        }
+
+        private IEnumerator CreateAudioWaveformc(AudioClip song)
+        {
+            if (song != null)
             {
-                foreach (TimelinePoint point in points.Values)
+                int samples = song.samples;
+                float[] data = new float[samples];
+                song.GetData(data, 0);
+                float sum = 0;
+                List<Vector3> dataa = new List<Vector3>();
+                for (int i = 0; i < samples; i++)
                 {
-                    float newPosition = point.transform.localPosition.x * zoomDifference;
-                    point.SetPoint(newPosition);
+                    sum += Mathf.Abs(data[i]);
+                    if (i % 480 == 0)
+                    {
+                        dataa.Add(new Vector3(i / 48000, sum / 480 * 100, 0));
+                        sum = 0;
+                        yield return null;
+                    }
                 }
+            }
+            else
+            {
+                Debug.LogError(typeof(AudioClip) + " received is null");
             }
         }
     }

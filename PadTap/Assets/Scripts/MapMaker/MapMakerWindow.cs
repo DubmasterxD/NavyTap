@@ -127,6 +127,7 @@ namespace PadTap.MapMaker
             if (previousSong != map.song)
             {
                 ResetMap();
+                visualizationManager.ChangeSong(map.song);
             }
         }
 
@@ -570,6 +571,7 @@ namespace PadTap.MapMaker
                 {
                     givenCopyright = true;
                     CreateMapCopy();
+                    visualizationManager.ChangeSong(map.song);
                 }
             }
         }

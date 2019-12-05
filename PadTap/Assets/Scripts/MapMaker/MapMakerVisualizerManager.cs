@@ -115,6 +115,26 @@ namespace PadTap.MapMaker
             }
         }
 
+        public void ChangeSong(AudioClip song)
+        {
+            if (timeline != null)
+            {
+                //timeline.CreateAudioWaveform(song);
+            }
+            else
+            {
+                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+            }
+            if (zoomableTimeline != null)
+            {
+                zoomableTimeline.CreateAudioWaveform(song);
+            }
+            else
+            {
+                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+            }
+        }
+
         public void ZoomIn()
         {
             if (zoomableTimeline != null)
