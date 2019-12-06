@@ -1,7 +1,6 @@
 ﻿using PadTap.Core;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 namespace PadTap.MapMaker
@@ -9,8 +8,11 @@ namespace PadTap.MapMaker
     public class Timeline : MonoBehaviour
     {
         [SerializeField] TimelinePoint pointPrefab = null;
-        [SerializeField] RectTransform rect = null;
-        
+        [SerializeField] Transform space = null;
+        [SerializeField] LineRenderer lineRenderer = null;
+
+        int zoom = 1;
+
         Dictionary<Map.Point, TimelinePoint> points = null;
 
         public void UpdatePoints(Map map)
@@ -43,7 +45,7 @@ namespace PadTap.MapMaker
         private void AddPoint(Map.Point point, float songLength)
         {
             float timePercentage = point.time / songLength;
-            if (pointPrefab != null && rect != null)
+            if (pointPrefab != null && space != null)
             {
                 if (points == null)
                 {
@@ -56,9 +58,10 @@ namespace PadTap.MapMaker
                 if (!points.ContainsKey(point))
                 {
                     TimelinePoint timelinePoint = Instantiate(pointPrefab, transform);
-                    float positionOnTimeline = timePercentage * rect.rect.width;
+                    float positionOnTimeline = timePercentage * space.localScale.x * 10 / zoom;
                     timelinePoint.SetPoint(positionOnTimeline);
                     points.Add(point, timelinePoint);
+                    RefreshPointsScale();
                 }
             }
             else
@@ -67,7 +70,7 @@ namespace PadTap.MapMaker
                 {
                     Logger.NotAssigned(typeof(TimelinePoint), GetType(), name);
                 }
-                if(rect == null)
+                if(space == null)
                 {
                     Logger.NotAssigned(typeof(RectTransform), GetType(), name);
                 }
@@ -109,7 +112,7 @@ namespace PadTap.MapMaker
 
         public void UpdateTime(float time, Map map)
         {
-            float timelineWidth = rect.rect.width * rect.localScale.x;
+            float timelineWidth = space.localScale.x * 10;
             float timePercentage = time / map.song.length;
             float newPosition = -timePercentage * timelineWidth;
             transform.localPosition = new Vector3(newPosition, 0, 0);
@@ -117,15 +120,37 @@ namespace PadTap.MapMaker
 
         public void ZoomIn()
         {
-            rect.localScale = new Vector3(rect.localScale.x * 2, 1, 1);
+            zoom *= 2;
+            space.localScale = new Vector3(zoom, 1, 1);
+            RefreshPointsScale();
         }
 
         public void ZoomOut()
         {
-            if (rect.localScale != Vector3.one)
+            if (space.localScale != Vector3.one)
             {
-                rect.localScale = new Vector3(rect.localScale.x / 2, 1, 1);
+                zoom /= 2;
+                space.localScale = new Vector3(zoom, 1, 1);
+                RefreshPointsScale();
             }
+        }
+
+        private void RefreshPointsScale()
+        {
+            foreach(TimelinePoint point in points.Values)
+            {
+                point.transform.localScale = new Vector3(1f / zoom, 1, 1);
+            }
+        }
+
+        public void VerticalZoomIn()
+        {
+            lineRenderer.transform.localScale = new Vector3(1, lineRenderer.transform.localScale.y * 2, 1);
+        }
+
+        public void VerticalZoomOut()
+        {
+            lineRenderer.transform.localScale = new Vector3(1, lineRenderer.transform.localScale.y / 2, 1);
         }
 
         public void CreateAudioWaveform(AudioClip song)
@@ -138,20 +163,33 @@ namespace PadTap.MapMaker
             if (song != null)
             {
                 int samples = song.samples;
-                float[] data = new float[samples];
+                float[] data = new float[samples * 2];
                 song.GetData(data, 0);
                 float sum = 0;
+                lineRenderer.positionCount = 0;
                 List<Vector3> dataa = new List<Vector3>();
-                for (int i = 0; i < samples; i++)
+                float max = 0;
+                for (int i = 0; i < data.Length; i++)
                 {
                     sum += Mathf.Abs(data[i]);
-                    if (i % 480 == 0)
+                    if (i % 200 == 0)
                     {
-                        dataa.Add(new Vector3(i / 48000, sum / 480 * 100, 0));
+                        dataa.Add(new Vector3(i / (float)song.frequency * 5 / song.length, sum / 200, 0));
                         sum = 0;
-                        yield return null;
+                        lineRenderer.positionCount += 1;
+                        lineRenderer.SetPosition(lineRenderer.positionCount - 1, dataa[lineRenderer.positionCount - 1]);
+                        if (dataa[lineRenderer.positionCount - 1].y > max)
+                        {
+                            max = dataa[lineRenderer.positionCount - 1].y;
+                            lineRenderer.transform.localScale = new Vector3(1, 1 / max, 1);
+                        }
+                        if (i % 100000 == 0)
+                        {
+                            yield return null;
+                        }
                     }
                 }
+                lineRenderer.transform.localScale = new Vector3(1, 1 / max, 1);
             }
             else
             {

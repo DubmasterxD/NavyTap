@@ -4,13 +4,11 @@ namespace PadTap.MapMaker
 {
     public class TimelinePoint : MonoBehaviour
     {
-        [SerializeField] RectTransform rect = null;
-
         public void SetPoint(float positionOnTimeline)
         {
-            if (rect != null)
+            if (transform != null)
             {
-                rect.localPosition = new Vector3(positionOnTimeline, 0);
+                transform.localPosition = new Vector3(positionOnTimeline, 0);
             }
             else
             {

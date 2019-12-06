@@ -158,5 +158,29 @@ namespace PadTap.MapMaker
                 Logger.NotAssigned(typeof(Timeline), GetType(), name);
             }
         }
+
+        public void VerticalZoomIn()
+        {
+            if (zoomableTimeline != null)
+            {
+                zoomableTimeline.VerticalZoomIn();
+            }
+            else
+            {
+                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+            }
+        }
+
+        public void VerticalZoomOut()
+        {
+            if (zoomableTimeline != null)
+            {
+                zoomableTimeline.VerticalZoomOut();
+            }
+            else
+            {
+                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+            }
+        }
     }
 }

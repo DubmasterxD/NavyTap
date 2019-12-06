@@ -299,6 +299,14 @@ namespace PadTap.MapMaker
             {
                 visualizationManager.ZoomOut();
             }
+            if (GUILayout.Button("Vertical Zoom In"))
+            {
+                visualizationManager.VerticalZoomIn();
+            }
+            if (GUILayout.Button("Vertical Zoom Out"))
+            {
+                visualizationManager.VerticalZoomOut();
+            }
             EditorGUILayout.EndHorizontal();
         }
 
