@@ -13,6 +13,11 @@ public class Logger : MonoBehaviour
         Debug.LogError("No object with component" + component + " assigned to " + toScript + " in " + inObject);
     }
 
+    public static void ReceivedNull(Type parameter)
+    {
+        Debug.Log(parameter + " received is null");
+    }
+
     public static void Error(string message)
     {
         Debug.LogError(message);

@@ -1,6 +1,5 @@
 ﻿using PadTap.Core;
 using PadTap.Maps;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace PadTap.MapMaker
@@ -119,7 +118,7 @@ namespace PadTap.MapMaker
         {
             if (timeline != null)
             {
-                //timeline.CreateAudioWaveform(song);
+                timeline.CreateAudioWaveform(song);
             }
             else
             {
@@ -176,6 +175,42 @@ namespace PadTap.MapMaker
             if (zoomableTimeline != null)
             {
                 zoomableTimeline.VerticalZoomOut();
+            }
+            else
+            {
+                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+            }
+        }
+
+        public void MoveTimelineUp()
+        {
+            if (zoomableTimeline != null)
+            {
+                zoomableTimeline.MoveUp();
+            }
+            else
+            {
+                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+            }
+        }
+
+        public void MoveTimeLineDown()
+        {
+            if (zoomableTimeline != null)
+            {
+                zoomableTimeline.MoveDown();
+            }
+            else
+            {
+                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+            }
+        }
+
+        public void ResetTimelineZoom()
+        {
+            if (zoomableTimeline != null)
+            {
+                zoomableTimeline.ResetZoom();
             }
             else
             {

@@ -11,7 +11,9 @@ namespace PadTap.MapMaker
         [SerializeField] Transform space = null;
         [SerializeField] LineRenderer lineRenderer = null;
 
+        float startingWaveVerticalScale = 1;
         int zoom = 1;
+        Coroutine loadingMap;
 
         Dictionary<Map.Point, TimelinePoint> points = null;
 
@@ -29,7 +31,7 @@ namespace PadTap.MapMaker
             {
                 if (map == null)
                 {
-                    Debug.LogError(typeof(Map) + " received is null");
+                    Logger.ReceivedNull(typeof(Map));
                 }
                 if (map.points == null)
                 {
@@ -61,7 +63,7 @@ namespace PadTap.MapMaker
                     float positionOnTimeline = timePercentage * space.localScale.x * 10 / zoom;
                     timelinePoint.SetPoint(positionOnTimeline);
                     points.Add(point, timelinePoint);
-                    RefreshPointsScale();
+                    RefreshPointsScale(zoom);
                 }
             }
             else
@@ -85,14 +87,19 @@ namespace PadTap.MapMaker
             }
             if (mapPoints != null)
             {
+                List<Map.Point> pointsToRemove = new List<Map.Point>();
                 foreach (Map.Point point in points.Keys)
                 {
                     if (!mapPoints.Contains(point))
                     {
                         TimelinePoint pointToDelete = points[point];
-                        points.Remove(point);
+                        pointsToRemove.Add(point);
                         pointToDelete.DeletePoint();
                     }
+                }
+                foreach (Map.Point point in pointsToRemove)
+                {
+                    points.Remove(point);
                 }
                 TimelinePoint[] childs = transform.GetComponentsInChildren<TimelinePoint>();
                 if (childs.Length > points.Count)
@@ -106,7 +113,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Debug.LogError(typeof(List<Map.Point>) + " received is null");
+                Logger.ReceivedNull(typeof(List<Map.Point>));
             }
         }
 
@@ -120,24 +127,22 @@ namespace PadTap.MapMaker
 
         public void ZoomIn()
         {
-            zoom *= 2;
-            space.localScale = new Vector3(zoom, 1, 1);
-            RefreshPointsScale();
+            RefreshPointsScale(zoom * 2);
         }
 
         public void ZoomOut()
         {
             if (space.localScale != Vector3.one)
             {
-                zoom /= 2;
-                space.localScale = new Vector3(zoom, 1, 1);
-                RefreshPointsScale();
+                RefreshPointsScale(zoom / 2);
             }
         }
 
-        private void RefreshPointsScale()
+        private void RefreshPointsScale(int newScale)
         {
-            foreach(TimelinePoint point in points.Values)
+            zoom = newScale;
+            space.localScale = new Vector3(zoom, 1, 1);
+            foreach (TimelinePoint point in points.Values)
             {
                 point.transform.localScale = new Vector3(1f / zoom, 1, 1);
             }
@@ -150,12 +155,19 @@ namespace PadTap.MapMaker
 
         public void VerticalZoomOut()
         {
-            lineRenderer.transform.localScale = new Vector3(1, lineRenderer.transform.localScale.y / 2, 1);
+            if (lineRenderer.transform.localScale.y != startingWaveVerticalScale)
+            {
+                lineRenderer.transform.localScale = new Vector3(1, lineRenderer.transform.localScale.y / 2, 1);
+            }
         }
 
         public void CreateAudioWaveform(AudioClip song)
         {
-            StartCoroutine(CreateAudioWaveformc(song));
+            if (loadingMap != null)
+            {
+                StopCoroutine(loadingMap);
+            }
+            loadingMap = StartCoroutine(CreateAudioWaveformc(song));
         }
 
         private IEnumerator CreateAudioWaveformc(AudioClip song)
@@ -190,11 +202,32 @@ namespace PadTap.MapMaker
                     }
                 }
                 lineRenderer.transform.localScale = new Vector3(1, 1 / max, 1);
+                startingWaveVerticalScale = 1 / max;
             }
             else
             {
-                Debug.LogError(typeof(AudioClip) + " received is null");
+                Logger.ReceivedNull(typeof(AudioClip));
             }
+        }
+
+        public void MoveUp()
+        {
+            lineRenderer.transform.localPosition = new Vector3(lineRenderer.transform.localPosition.x, lineRenderer.transform.localPosition.y - 1 / 2f, lineRenderer.transform.localPosition.z);
+        }
+
+        public void MoveDown()
+        {
+            if (lineRenderer.transform.localPosition.y != -0.5)
+            {
+                lineRenderer.transform.localPosition = new Vector3(lineRenderer.transform.localPosition.x, lineRenderer.transform.localPosition.y + 1 / 2f, lineRenderer.transform.localPosition.z);
+            }
+        }
+
+        public void ResetZoom()
+        {
+            lineRenderer.transform.localPosition = new Vector3(lineRenderer.transform.localPosition.x, -0.5f, 0);
+            lineRenderer.transform.localScale = new Vector3(1, startingWaveVerticalScale, 1);
+            RefreshPointsScale(1);
         }
     }
 }

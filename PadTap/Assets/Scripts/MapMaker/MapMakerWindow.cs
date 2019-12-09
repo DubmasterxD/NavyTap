@@ -55,6 +55,7 @@ namespace PadTap.MapMaker
 
         private void OnGUI()
         {
+            DrawMapLoad();
             if (map != null)
             {
                 DrawSongSelection();
@@ -75,7 +76,6 @@ namespace PadTap.MapMaker
                     }
                 }
             }
-            DrawMapLoad();
         }
 
         private void CheckForMap()
@@ -291,6 +291,7 @@ namespace PadTap.MapMaker
         {
             EditorGUILayout.LabelField("Visualizer Options");
             EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.BeginVertical();
             if (GUILayout.Button("Zoom In"))
             {
                 visualizationManager.ZoomIn();
@@ -299,6 +300,8 @@ namespace PadTap.MapMaker
             {
                 visualizationManager.ZoomOut();
             }
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.BeginVertical();
             if (GUILayout.Button("Vertical Zoom In"))
             {
                 visualizationManager.VerticalZoomIn();
@@ -307,7 +310,22 @@ namespace PadTap.MapMaker
             {
                 visualizationManager.VerticalZoomOut();
             }
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.BeginVertical();
+            if (GUILayout.Button("U"))
+            {
+                visualizationManager.MoveTimelineUp();
+            }
+            if (GUILayout.Button("D"))
+            {
+                visualizationManager.MoveTimeLineDown();
+            }
+            EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
+            if(GUILayout.Button("Reset Zoom"))
+            {
+                visualizationManager.ResetTimelineZoom();
+            }
         }
 
         private void DrawMapLoad()
@@ -569,6 +587,7 @@ namespace PadTap.MapMaker
         {
             if (Selection.assetGUIDs.Length == 1)
             {
+                ResetMap();
                 string mapGUID = Selection.assetGUIDs[0];
                 map = AssetDatabase.LoadAssetAtPath<Map>(AssetDatabase.GUIDToAssetPath(mapGUID));
                 if (map == null)
