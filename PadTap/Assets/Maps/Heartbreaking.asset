@@ -17,16 +17,24 @@ MonoBehaviour:
   threshold: 0.5
   indicatorLifespan: 1
   points:
-  - time: 1.452
+  - time: 1.4060003
     tileIndex: 0
-  - time: 1.85
+  - time: 1.7939974
     tileIndex: 1
-  - time: 2.2499998
+  - time: 2.188
+    tileIndex: 4
+  - time: 2.5569992
+    tileIndex: 5
+  - time: 2.9380002
+    tileIndex: 4
+  - time: 3.3300004
+    tileIndex: 5
+  - time: 3.7319999
+    tileIndex: 0
+  - time: 4.1169987
     tileIndex: 1
-  - time: 2.589999
-    tileIndex: 1
-  - time: 3
-    tileIndex: 1
+  - time: 4.4649987
+    tileIndex: 15
   song: {fileID: 8300000, guid: 6e71fe23e7bbfe24996c964da815bd09, type: 3}
   mapName: Heartbreaking
   copyright: "Music from https://filmmusic.io\r\n\"Heartbreaking\" by Kevin MacLeod

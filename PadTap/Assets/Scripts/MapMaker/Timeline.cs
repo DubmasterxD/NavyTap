@@ -150,7 +150,15 @@ namespace PadTap.MapMaker
 
         public void VerticalZoomIn()
         {
-            lineRenderer.transform.localScale = new Vector3(1, lineRenderer.transform.localScale.y * 2, 1);
+            if (lineRenderer.transform.localScale.y / startingWaveVerticalScale < Mathf.Pow(2, 3))
+            {
+                lineRenderer.transform.localScale = new Vector3(1, lineRenderer.transform.localScale.y * 2, 1);
+                float tmp = (lineRenderer.transform.localPosition.y + 0.5f) / -0.5f;
+                for (int i = 0; i < tmp; i++)
+                {
+                    MoveUp();
+                }
+            }
         }
 
         public void VerticalZoomOut()
@@ -158,6 +166,11 @@ namespace PadTap.MapMaker
             if (lineRenderer.transform.localScale.y != startingWaveVerticalScale)
             {
                 lineRenderer.transform.localScale = new Vector3(1, lineRenderer.transform.localScale.y / 2, 1);
+                float tmp = (lineRenderer.transform.localPosition.y + 0.5f) / -0.5f / 2;
+                for (int i = 0; i < tmp; i++)
+                {
+                    MoveDown();
+                }
             }
         }
 
@@ -174,8 +187,9 @@ namespace PadTap.MapMaker
         {
             if (song != null)
             {
-                int samples = song.samples;
-                float[] data = new float[samples * 2];
+                int samples = (int)(song.frequency * song.length) * 2;
+                float[] data = new float[samples];
+                Debug.Log(song.samples);
                 song.GetData(data, 0);
                 float sum = 0;
                 lineRenderer.positionCount = 0;
@@ -212,7 +226,10 @@ namespace PadTap.MapMaker
 
         public void MoveUp()
         {
-            lineRenderer.transform.localPosition = new Vector3(lineRenderer.transform.localPosition.x, lineRenderer.transform.localPosition.y - 1 / 2f, lineRenderer.transform.localPosition.z);
+            if (lineRenderer.transform.localPosition.y > -0.5f - 0.5f * lineRenderer.transform.localScale.y / startingWaveVerticalScale * 2 +0.5f)
+            {
+                lineRenderer.transform.localPosition = new Vector3(lineRenderer.transform.localPosition.x, lineRenderer.transform.localPosition.y - 1 / 2f, lineRenderer.transform.localPosition.z);
+            }
         }
 
         public void MoveDown()

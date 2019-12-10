@@ -537,6 +537,7 @@ namespace PadTap.MapMaker
             {
                 if (point.time == currentTime)
                 {
+                    point.tileIndex = tileIndex;
                     return;
                 }
             }

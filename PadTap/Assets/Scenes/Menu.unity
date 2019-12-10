@@ -511,7 +511,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e05ebb8ccc1722f408e0f4ea13fcc6db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  map: {fileID: 11400000, guid: aa169b1bb2a4cec45bccf2a9d63ddb03, type: 2}
+  map: {fileID: 11400000, guid: f6b86e5ebaf78f7408ef472541cc7184, type: 2}
 --- !u!1 &1183012063
 GameObject:
   m_ObjectHideFlags: 0
