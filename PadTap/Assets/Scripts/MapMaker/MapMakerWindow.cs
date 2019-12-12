@@ -23,6 +23,7 @@ namespace PadTap.MapMaker
         private Map map = null;
         private Map.Point currentPoint = null;
         private float currentTime = 0;
+        private float playbackSpeed = 1;
         private float deltaTime = 1;
         private bool givenCopyright = false;
 
@@ -219,6 +220,7 @@ namespace PadTap.MapMaker
             }
             EditorGUILayout.EndHorizontal();
             UpdateTime(currentTime);
+            SetPlaybackSpeed();
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Back"))
             {
@@ -294,31 +296,31 @@ namespace PadTap.MapMaker
             EditorGUILayout.BeginVertical();
             if (GUILayout.Button("Zoom In"))
             {
-                visualizationManager.ZoomIn();
+                visualizationManager.ZoomInTimeline();
             }
             if (GUILayout.Button("Zoom Out"))
             {
-                visualizationManager.ZoomOut();
+                visualizationManager.ZoomOutTimeline();
             }
             EditorGUILayout.EndVertical();
             EditorGUILayout.BeginVertical();
             if (GUILayout.Button("Vertical Zoom In"))
             {
-                visualizationManager.VerticalZoomIn();
+                visualizationManager.VerticalZoomInTimeline();
             }
             if (GUILayout.Button("Vertical Zoom Out"))
             {
-                visualizationManager.VerticalZoomOut();
+                visualizationManager.VerticalZoomOutTimeline();
             }
             EditorGUILayout.EndVertical();
             EditorGUILayout.BeginVertical();
             if (GUILayout.Button("U"))
             {
-                visualizationManager.MoveTimelineUp();
+                visualizationManager.MoveUpTimeline();
             }
             if (GUILayout.Button("D"))
             {
-                visualizationManager.MoveTimeLineDown();
+                visualizationManager.MoveDownTimeline();
             }
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
@@ -344,6 +346,7 @@ namespace PadTap.MapMaker
         private void ResetMap()
         {
             map.ResetMap();
+            visualizationManager.ResetMap();
             givenCopyright = false;
             UpdateTime(0);
             PauseMusic();
@@ -394,6 +397,16 @@ namespace PadTap.MapMaker
                     currentTime = audioSource.time;
                 }
             }
+            currentTime = Mathf.Round(currentTime * 10000) / 10000;
+        }
+
+        private void SetPlaybackSpeed()
+        {
+            playbackSpeed = EditorGUILayout.Slider("Playback Speed",playbackSpeed, -1, 1);
+            if (audioSource != null)
+            {
+                audioSource.pitch = playbackSpeed;
+            }
         }
 
         private void MoveTime(float deltaTime)
@@ -416,7 +429,7 @@ namespace PadTap.MapMaker
 
         private void SetCurrentPointFromCurrentTime()
         {
-            if (map.points!=null && map.points.Count > 0)
+            if (map.points != null && map.points.Count > 0)
             {
                 currentPoint = map.points[0];
                 foreach (Map.Point point in map.points)

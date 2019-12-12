@@ -7,8 +7,7 @@ namespace PadTap.MapMaker
     public class MapMakerVisualizerManager : MonoBehaviour
     {
         [SerializeField] IndicatorSpeedVisualizer indicatorSpeedVisualizer = null;
-        [SerializeField] Timeline timeline = null;
-        [SerializeField] Timeline zoomableTimeline = null;
+        [SerializeField] Timelines timelines = null;
         [SerializeField] TileSpawner tileSpawner = null;
 
         public void ManualUpdate(Map map, float time, float deltaTime)
@@ -18,7 +17,7 @@ namespace PadTap.MapMaker
             ChangePerfectScore(map.GetPerfectScore(), map.GetPerfectScoreAcceptableDifference());
             ChangeSpeedFromFilespan(map.indicatorLifespan);
             Animate(deltaTime);
-            UpdatePoints(map);
+            UpdateTimelinesPoints(map);
             UpdateTime(time, map);
         }
 
@@ -82,140 +81,129 @@ namespace PadTap.MapMaker
             }
         }
 
-        public void UpdatePoints(Map map)
+        public void UpdateTimelinesPoints(Map map)
         {
-            if (timeline != null)
+            if (timelines != null)
             {
-                timeline.UpdatePoints(map);
+                timelines.UpdatePoints(map);
             }
             else
             {
-                Logger.NotAssigned(typeof(Timeline), GetType(), name);
-            }
-            if (zoomableTimeline != null)
-            {
-                zoomableTimeline.UpdatePoints(map);
-            }
-            else
-            {
-                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+                Logger.NotAssigned(typeof(Timelines), GetType(), name);
             }
         }
 
         public void UpdateTime(float time, Map map)
         {
-            if (zoomableTimeline != null)
+            if (timelines != null)
             {
-                zoomableTimeline.UpdateTime(time, map);
+                timelines.UpdateTime(time, map);
             }
             else
             {
-                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+                Logger.NotAssigned(typeof(Timelines), GetType(), name);
             }
         }
 
         public void ChangeSong(AudioClip song)
         {
-            if (timeline != null)
+            if (timelines != null)
             {
-                timeline.CreateAudioWaveform(song);
+                timelines.ChangeSong(song);
             }
             else
             {
-                Logger.NotAssigned(typeof(Timeline), GetType(), name);
-            }
-            if (zoomableTimeline != null)
-            {
-                zoomableTimeline.CreateAudioWaveform(song);
-            }
-            else
-            {
-                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+                Logger.NotAssigned(typeof(Timelines), GetType(), name);
             }
         }
 
-        public void ZoomIn()
+        public void ZoomInTimeline()
         {
-            if (zoomableTimeline != null)
+            if (timelines != null)
             {
-                zoomableTimeline.ZoomIn();
+                timelines.ZoomIn();
             }
             else
             {
-                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+                Logger.NotAssigned(typeof(Timelines), GetType(), name);
             }
         }
 
-        public void ZoomOut()
+        public void ZoomOutTimeline()
         {
-            if (zoomableTimeline != null)
+            if (timelines != null)
             {
-                zoomableTimeline.ZoomOut();
+                timelines.ZoomOut();
             }
             else
             {
-                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+                Logger.NotAssigned(typeof(Timelines), GetType(), name);
             }
         }
 
-        public void VerticalZoomIn()
+        public void VerticalZoomInTimeline()
         {
-            if (zoomableTimeline != null)
+            if (timelines != null)
             {
-                zoomableTimeline.VerticalZoomIn();
+                timelines.VerticalZoomIn();
             }
             else
             {
-                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+                Logger.NotAssigned(typeof(Timelines), GetType(), name);
             }
         }
 
-        public void VerticalZoomOut()
+        public void VerticalZoomOutTimeline()
         {
-            if (zoomableTimeline != null)
+            if (timelines != null)
             {
-                zoomableTimeline.VerticalZoomOut();
+                timelines.VerticalZoomOut();
             }
             else
             {
-                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+                Logger.NotAssigned(typeof(Timelines), GetType(), name);
             }
         }
 
-        public void MoveTimelineUp()
+        public void MoveUpTimeline()
         {
-            if (zoomableTimeline != null)
+            if (timelines != null)
             {
-                zoomableTimeline.MoveUp();
+                timelines.MoveTimelineUp();
             }
             else
             {
-                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+                Logger.NotAssigned(typeof(Timelines), GetType(), name);
             }
         }
 
-        public void MoveTimeLineDown()
+        public void MoveDownTimeline()
         {
-            if (zoomableTimeline != null)
+            if (timelines != null)
             {
-                zoomableTimeline.MoveDown();
+                timelines.MoveTimeLineDown();
             }
             else
             {
-                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+                Logger.NotAssigned(typeof(Timelines), GetType(), name);
             }
         }
 
         public void ResetTimelineZoom()
         {
-            if (zoomableTimeline != null)
+            if (timelines != null)
             {
-                zoomableTimeline.ResetZoom();
+                timelines.ResetTimelineZoom();
             }
             else
             {
-                Logger.NotAssigned(typeof(Timeline), GetType(), name);
+                Logger.NotAssigned(typeof(Timelines), GetType(), name);
             }
+        }
+
+        public void ResetMap()
+        {
+            ResetTimelineZoom();
         }
     }
 }
