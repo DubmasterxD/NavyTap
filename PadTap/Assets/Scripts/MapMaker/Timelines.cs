@@ -1,4 +1,5 @@
 ﻿using PadTap.Core;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,11 +12,11 @@ namespace PadTap.MapMaker
         [SerializeField] Text currentTime = null;
         [SerializeField] Transform pointer = null;
 
-        public void UpdatePoints(Map map)
+        public void UpdatePoints(Map map, List<Map.Point> points)
         {
             if (timeline != null)
             {
-                timeline.UpdatePoints(map);
+                timeline.UpdatePoints(map, points);
             }
             else
             {
@@ -23,7 +24,7 @@ namespace PadTap.MapMaker
             }
             if (zoomableTimeline != null)
             {
-                zoomableTimeline.UpdatePoints(map);
+                zoomableTimeline.UpdatePoints(map, points);
             }
             else
             {
@@ -161,6 +162,26 @@ namespace PadTap.MapMaker
             else
             {
                 Logger.NotAssigned(typeof(Timeline), GetType(), name);
+            }
+        }
+
+        public void ShowSelection(float selectionStartTime, float selectionEndTime, float songLength)
+        {
+            if (timeline != null)
+            {
+                timeline.ShowSelection(selectionStartTime, selectionEndTime, songLength);
+            }
+            else
+            {
+                Logger.NotAssigned(typeof(Timelines), GetType(), name);
+            }
+            if (zoomableTimeline != null)
+            {
+                zoomableTimeline.ShowSelection(selectionStartTime, selectionEndTime, songLength);
+            }
+            else
+            {
+                Logger.NotAssigned(typeof(Timelines), GetType(), name);
             }
         }
     }

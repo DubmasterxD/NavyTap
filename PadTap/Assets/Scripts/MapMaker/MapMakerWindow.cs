@@ -22,6 +22,9 @@ namespace PadTap.MapMaker
         private AudioSource audioSource = null;
         private Map map = null;
         private Map.Point currentPoint = null;
+        private float selectionStartTime = 0;
+        private float selectionEndTime = 0;
+        private List<Map.Point> selection = null;
         private float currentTime = 0;
         private float playbackSpeed = 1;
         private float deltaTime = 1;
@@ -48,9 +51,19 @@ namespace PadTap.MapMaker
             {
                 Repaint();
             }
+            if (selection != null && selection.Count > 0)
+            {
+                float startingTime = currentTime - selection[0].time;
+                foreach (Map.Point point in selection)
+                {
+                    point.time = startingTime + point.time;
+                    point.time = Mathf.Floor(point.time * 10000) / 10000;
+                }
+            }
             if (visualizationManager != null && map != null && map.song != null)
             {
-                visualizationManager.ManualUpdate(map, currentTime, Time.deltaTime);
+                visualizationManager.ManualUpdate(map, currentTime, Time.deltaTime, selection);
+                visualizationManager.ShowSelection(selectionStartTime, selectionEndTime, map.song.length);
             }
         }
 
@@ -248,6 +261,52 @@ namespace PadTap.MapMaker
             }
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.BeginHorizontal();
+            if(GUILayout.Button("Start Selection"))
+            {
+                selectionStartTime = currentTime;
+                if (selectionStartTime > selectionEndTime)
+                {
+                    selectionEndTime = selectionStartTime;
+                }
+            }
+            if(GUILayout.Button("End Selection"))
+            {
+                selectionEndTime = currentTime;
+                if (selectionStartTime > selectionEndTime)
+                {
+                    selectionStartTime = selectionEndTime;
+                }
+            }
+            if(GUILayout.Button("Copy"))
+            {
+                selection = new List<Map.Point>();
+                foreach(Map.Point point in map.points)
+                {
+                    if(point.time>=selectionStartTime && point.time <= selectionEndTime)
+                    {
+                        selection.Add(new Map.Point(point.time, point.tileIndex));
+                    }
+                }
+            }
+            if (GUILayout.Button("Paste"))
+            {
+                if (selection != null && selection.Count > 0)
+                {
+                    foreach (Map.Point point in selection)
+                    {
+                        currentTime = point.time;
+                        AddPoint(point.tileIndex);
+                    }
+                }
+            }
+            if (GUILayout.Button("Clear"))
+            {
+                selection = null;
+                selectionStartTime = 0;
+                selectionEndTime = 0;
+            }
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Delete Point"))
             {
                 DeletePoint(currentPoint);
@@ -282,7 +341,7 @@ namespace PadTap.MapMaker
             {
                 EditorGUILayout.HelpBox("Song Name required!", MessageType.Warning);
             }
-            else if (GUILayout.Button("Save"))
+            else if (GUILayout.Button("Save map"))
             {
                 SaveMap();
             }

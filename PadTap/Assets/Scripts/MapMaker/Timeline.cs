@@ -8,7 +8,9 @@ namespace PadTap.MapMaker
     public class Timeline : MonoBehaviour
     {
         [SerializeField] TimelinePoint pointPrefab = null;
+        [SerializeField] TimelinePoint copiedPrefab = null;
         [SerializeField] Transform space = null;
+        [SerializeField] Transform selection = null;
         [SerializeField] LineRenderer lineRenderer = null;
 
         float startingWaveVerticalScale = 1;
@@ -16,16 +18,25 @@ namespace PadTap.MapMaker
         Coroutine loadingMap;
 
         Dictionary<Map.Point, TimelinePoint> points = null;
+        Dictionary<Map.Point, TimelinePoint> copied = null;
 
-        public void UpdatePoints(Map map)
+        public void UpdatePoints(Map map, List<Map.Point> newPoints)
         {
-            if (map != null && map.points != null && map.song != null)
+            if (newPoints != map.points)
             {
-                foreach (Map.Point point in map.points)
+                ClearCopied();
+            }
+            if (map != null && newPoints != null && map.song != null)
+            {
+                foreach (Map.Point point in newPoints)
                 {
-                    AddPoint(point, map.song.length);
+                    AddPoint(point, map.song.length, newPoints != map.points);
                 }
-                DeleteUnnecesaryPoints(map.points);
+                if (newPoints == map.points)
+                {
+                    DeleteUnnecesaryPoints(map.points);
+                }
+                RefreshPointsScale(zoom);
             }
             else
             {
@@ -35,7 +46,7 @@ namespace PadTap.MapMaker
                 }
                 if (map.points == null)
                 {
-                    Debug.LogError(typeof(List<Map.Point>) + " in " + map.mapName + " map is null");
+                    Logger.ReceivedNull(typeof(List<Map.Point>));
                 }
                 if (map.song == null)
                 {
@@ -44,35 +55,75 @@ namespace PadTap.MapMaker
             }
         }
 
-        private void AddPoint(Map.Point point, float songLength)
+        private void ClearCopied()
+        {
+            if (copied != null)
+            {
+                List<Map.Point> pointsToRemove = new List<Map.Point>();
+                foreach (Map.Point point in copied.Keys)
+                {
+                    TimelinePoint pointToDelete = copied[point];
+                    pointsToRemove.Add(point);
+                    if (pointToDelete != null)
+                    {
+                        pointToDelete.DeletePoint();
+                    }
+                }
+                foreach (Map.Point point in pointsToRemove)
+                {
+                    copied.Remove(point);
+                }
+            }
+        }
+
+        private void AddPoint(Map.Point point, float songLength, bool isCopied)
         {
             float timePercentage = point.time / songLength;
-            if (pointPrefab != null && space != null)
+            float positionOnTimeline = timePercentage * space.localScale.x * 10 / zoom;
+            if (pointPrefab != null && space != null && copiedPrefab!=null)
             {
-                if (points == null)
+                if (!isCopied)
                 {
-                    points = new Dictionary<Map.Point, TimelinePoint>();
+                    if (points == null)
+                    {
+                        points = new Dictionary<Map.Point, TimelinePoint>();
+                    }
+                    if (points.ContainsKey(point) && points[point] == null)
+                    {
+                        points.Remove(point);
+                    }
+                    if (!points.ContainsKey(point))
+                    {
+                        TimelinePoint timelinePoint = Instantiate(pointPrefab, transform);
+                        timelinePoint.SetPoint(positionOnTimeline);
+                        points.Add(point, timelinePoint);
+                    }
                 }
-                if(points.ContainsKey(point) && points[point] == null)
+                else
                 {
-                    points.Remove(point);
-                }
-                if (!points.ContainsKey(point))
-                {
-                    TimelinePoint timelinePoint = Instantiate(pointPrefab, transform);
-                    float positionOnTimeline = timePercentage * space.localScale.x * 10 / zoom;
-                    timelinePoint.SetPoint(positionOnTimeline);
-                    points.Add(point, timelinePoint);
-                    RefreshPointsScale(zoom);
+                    if (copied == null)
+                    {
+                        copied = new Dictionary<Map.Point, TimelinePoint>();
+                    }
+                    if (!copied.ContainsKey(point))
+                    {
+                        TimelinePoint timelinePoint = Instantiate(copiedPrefab, transform);
+                        timelinePoint.SetPoint(positionOnTimeline);
+                        copied.Add(point, timelinePoint);
+                    }
                 }
             }
             else
             {
-                if(pointPrefab == null)
+                if (pointPrefab == null)
                 {
                     Logger.NotAssigned(typeof(TimelinePoint), GetType(), name);
                 }
-                if(space == null)
+                if (copiedPrefab == null)
+                {
+                    Logger.NotAssigned(typeof(TimelinePoint), GetType(), name);
+                }
+                if (space == null)
                 {
                     Logger.NotAssigned(typeof(RectTransform), GetType(), name);
                 }
@@ -142,9 +193,22 @@ namespace PadTap.MapMaker
         {
             zoom = newScale;
             space.localScale = new Vector3(zoom, 1, 1);
-            foreach (TimelinePoint point in points.Values)
+            if (points != null)
             {
-                point.transform.localScale = new Vector3(1f / zoom, 1, 1);
+                foreach (TimelinePoint point in points.Values)
+                {
+                    point.transform.localScale = new Vector3(1f / zoom, 1, 1);
+                }
+            }
+            if (copied != null)
+            {
+                foreach (TimelinePoint point in copied.Values)
+                {
+                    if (point != null)
+                    {
+                        point.transform.localScale = new Vector3(1f / zoom, 1, 1);
+                    }
+                }
             }
         }
 
@@ -189,7 +253,6 @@ namespace PadTap.MapMaker
             {
                 int samples = (int)(song.frequency * song.length) * 2;
                 float[] data = new float[samples];
-                Debug.Log(song.samples);
                 song.GetData(data, 0);
                 float sum = 0;
                 lineRenderer.positionCount = 0;
@@ -226,7 +289,7 @@ namespace PadTap.MapMaker
 
         public void MoveUp()
         {
-            if (lineRenderer.transform.localPosition.y > -0.5f - 0.5f * lineRenderer.transform.localScale.y / startingWaveVerticalScale * 2 +0.5f)
+            if (lineRenderer.transform.localPosition.y > -0.5f - 0.5f * lineRenderer.transform.localScale.y / startingWaveVerticalScale * 2 + 0.5f)
             {
                 lineRenderer.transform.localPosition = new Vector3(lineRenderer.transform.localPosition.x, lineRenderer.transform.localPosition.y - 1 / 2f, lineRenderer.transform.localPosition.z);
             }
@@ -245,6 +308,30 @@ namespace PadTap.MapMaker
             lineRenderer.transform.localPosition = new Vector3(lineRenderer.transform.localPosition.x, -0.5f, 0);
             lineRenderer.transform.localScale = new Vector3(1, startingWaveVerticalScale, 1);
             RefreshPointsScale(1);
+        }
+
+        public void ShowSelection(float selectionStartTime, float selectionEndTime, float songLength)
+        {
+            if (selection != null)
+            {
+                if (selectionEndTime > selectionStartTime)
+                {
+                    selection.gameObject.SetActive(true);
+                    float timePercentage = selectionStartTime / songLength;
+                    float positionOnTimeline = timePercentage * 10;
+                    selection.localPosition = new Vector3(positionOnTimeline, 0, 0);
+                    float scale = (selectionEndTime - selectionStartTime) / songLength * 1000;
+                    selection.localScale = new Vector3(scale, 1, 1);
+                }
+                else
+                {
+                    selection.gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                Logger.NotAssigned(typeof(Transform), GetType(), name);
+            }
         }
     }
 }

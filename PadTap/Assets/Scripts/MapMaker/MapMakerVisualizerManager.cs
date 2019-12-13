@@ -1,5 +1,6 @@
 ﻿using PadTap.Core;
 using PadTap.Maps;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace PadTap.MapMaker
@@ -10,14 +11,15 @@ namespace PadTap.MapMaker
         [SerializeField] Timelines timelines = null;
         [SerializeField] TileSpawner tileSpawner = null;
 
-        public void ManualUpdate(Map map, float time, float deltaTime)
+        public void ManualUpdate(Map map, float time, float deltaTime, List<Map.Point> selection)
         {
             SetVisibleTiles(map.tilesRows, map.tilesColumns);
             ChageThreshold(map.threshold);
             ChangePerfectScore(map.GetPerfectScore(), map.GetPerfectScoreAcceptableDifference());
             ChangeSpeedFromFilespan(map.indicatorLifespan);
             Animate(deltaTime);
-            UpdateTimelinesPoints(map);
+            UpdateTimelinesPoints(map, map.points);
+            UpdateTimelinesPoints(map, selection);
             UpdateTime(time, map);
         }
 
@@ -81,11 +83,11 @@ namespace PadTap.MapMaker
             }
         }
 
-        public void UpdateTimelinesPoints(Map map)
+        public void UpdateTimelinesPoints(Map map, List<Map.Point> points)
         {
             if (timelines != null)
             {
-                timelines.UpdatePoints(map);
+                timelines.UpdatePoints(map, points);
             }
             else
             {
@@ -204,6 +206,18 @@ namespace PadTap.MapMaker
         public void ResetMap()
         {
             ResetTimelineZoom();
+        }
+
+        public void ShowSelection(float selectionStartTime, float selectionEndTime, float songLength)
+        {
+            if (timelines != null)
+            {
+                timelines.ShowSelection(selectionStartTime, selectionEndTime, songLength);
+            }
+            else
+            {
+                Logger.NotAssigned(typeof(Timelines), GetType(), name);
+            }
         }
     }
 }
