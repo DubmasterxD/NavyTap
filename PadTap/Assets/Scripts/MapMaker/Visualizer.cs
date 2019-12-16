@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace PadTap.MapMaker
 {
-    public class MapMakerVisualizerManager : MonoBehaviour
+    public class Visualizer : MonoBehaviour
     {
         [SerializeField] IndicatorSpeedVisualizer indicatorSpeedVisualizer = null;
         [SerializeField] Timelines timelines = null;
@@ -18,7 +18,6 @@ namespace PadTap.MapMaker
             ChangePerfectScore(map.GetPerfectScore(), map.GetPerfectScoreAcceptableDifference());
             ChangeSpeedFromFilespan(map.indicatorLifespan);
             Animate(deltaTime);
-            UpdateTimelinesPoints(map, map.points);
             UpdateTimelinesPoints(map, selection);
             UpdateTime(time, map);
         }

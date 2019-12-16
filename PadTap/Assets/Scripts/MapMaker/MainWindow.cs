@@ -5,20 +5,20 @@ using PadTap.Core;
 
 namespace PadTap.MapMaker
 {
-    public class MapMakerWindow : EditorWindow
+    public class MainWindow : EditorWindow
     {
         private static Vector2 windowSize = new Vector2(400, 600);
 
         [MenuItem("Window/Map Maker")]
         private static void OpenWindow()
         {
-            MapMakerWindow window = GetWindow<MapMakerWindow>("Map Maker");
+            MainWindow window = GetWindow<MainWindow>("Map Maker");
             window.minSize = windowSize;
             window.maxSize = windowSize;
             window.Show();
         }
 
-        private MapMakerVisualizerManager visualizationManager = null;
+        private Visualizer visualizationManager = null;
         private AudioSource audioSource = null;
         private Map map = null;
         private Map.Point currentPoint = null;
@@ -104,10 +104,10 @@ namespace PadTap.MapMaker
         {
             if (visualizationManager == null)
             {
-                visualizationManager = FindObjectOfType<MapMakerVisualizerManager>();
+                visualizationManager = FindObjectOfType<Visualizer>();
                 if (visualizationManager == null)
                 {
-                    Logger.NoComponentFound(typeof(MapMakerVisualizerManager));
+                    Logger.NoComponentFound(typeof(Visualizer));
                 }
             }
         }
@@ -678,7 +678,7 @@ namespace PadTap.MapMaker
 
         public class PointChoicePopup : PopupWindowContent
         {
-            private MapMakerWindow parent;
+            private MainWindow parent;
 
             private List<Map.Point> points;
             private Map.Point currentPoint;
@@ -716,7 +716,7 @@ namespace PadTap.MapMaker
                 }
             }
 
-            public void Initialization(MapMakerWindow newParent, List<Map.Point> newPoints, Map.Point newCurrentPoint)
+            public void Initialization(MainWindow newParent, List<Map.Point> newPoints, Map.Point newCurrentPoint)
             {
                 parent = newParent;
                 points = newPoints;
