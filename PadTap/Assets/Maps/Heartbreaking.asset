@@ -16,7 +16,287 @@ MonoBehaviour:
   tilesColumns: 4
   threshold: 0.5
   indicatorLifespan: 1
-  points: []
+  points:
+  - time: 1.4009
+    tileIndex: 0
+  - time: 1.7942
+    tileIndex: 1
+  - time: 2.1819
+    tileIndex: 4
+  - time: 2.5564
+    tileIndex: 5
+  - time: 2.9384
+    tileIndex: 4
+  - time: 3.3336
+    tileIndex: 5
+  - time: 3.7185
+    tileIndex: 0
+  - time: 4.1084
+    tileIndex: 1
+  - time: 4.4583
+    tileIndex: 10
+  - time: 7.7137
+    tileIndex: 0
+  - time: 8.1105
+    tileIndex: 1
+  - time: 8.4864
+    tileIndex: 4
+  - time: 8.8461
+    tileIndex: 5
+  - time: 9.2102
+    tileIndex: 4
+  - time: 9.6084
+    tileIndex: 5
+  - time: 9.9695
+    tileIndex: 0
+  - time: 10.3345
+    tileIndex: 1
+  - time: 10.8102
+    tileIndex: 10
+  - time: 13.971
+    tileIndex: 3
+  - time: 14.3572
+    tileIndex: 2
+  - time: 14.7319
+    tileIndex: 7
+  - time: 15.1312
+    tileIndex: 6
+  - time: 15.5081
+    tileIndex: 7
+  - time: 15.9035
+    tileIndex: 6
+  - time: 16.2507
+    tileIndex: 3
+  - time: 16.6195
+    tileIndex: 2
+  - time: 17.0455
+    tileIndex: 9
+  - time: 20.1156
+    tileIndex: 0
+  - time: 20.5107
+    tileIndex: 1
+  - time: 20.8947
+    tileIndex: 3
+  - time: 21.3066
+    tileIndex: 2
+  - time: 21.6579
+    tileIndex: 4
+  - time: 22.0656
+    tileIndex: 5
+  - time: 22.5051
+    tileIndex: 7
+  - time: 22.9497
+    tileIndex: 6
+  - time: 23.4321
+    tileIndex: 7
+  - time: 23.9317
+    tileIndex: 6
+  - time: 24.4816
+    tileIndex: 0
+  - time: 25.0131
+    tileIndex: 10
+  - time: 25.609
+    tileIndex: 0
+  - time: 26.2531
+    tileIndex: 10
+  - time: 26.9188
+    tileIndex: 0
+  - time: 27.6756
+    tileIndex: 15
+  - time: 28.8214
+    tileIndex: 0
+  - time: 29.1779
+    tileIndex: 1
+  - time: 29.5558
+    tileIndex: 4
+  - time: 29.906
+    tileIndex: 5
+  - time: 30.2993
+    tileIndex: 4
+  - time: 30.6894
+    tileIndex: 5
+  - time: 31.053
+    tileIndex: 0
+  - time: 31.3984
+    tileIndex: 1
+  - time: 31.7964
+    tileIndex: 10
+  - time: 32.1937
+    tileIndex: 15
+  - time: 34.1538
+    tileIndex: 5
+  - time: 34.9476
+    tileIndex: 7
+  - time: 35.3294
+    tileIndex: 6
+  - time: 35.7215
+    tileIndex: 3
+  - time: 36.0871
+    tileIndex: 2
+  - time: 36.5083
+    tileIndex: 3
+  - time: 36.8824
+    tileIndex: 2
+  - time: 37.3278
+    tileIndex: 7
+  - time: 37.6687
+    tileIndex: 6
+  - time: 38.1142
+    tileIndex: 9
+  - time: 38.5355
+    tileIndex: 12
+  - time: 41.5763
+    tileIndex: 0
+  - time: 41.9849
+    tileIndex: 1
+  - time: 42.3269
+    tileIndex: 4
+  - time: 42.6895
+    tileIndex: 5
+  - time: 43.0921
+    tileIndex: 4
+  - time: 43.4827
+    tileIndex: 5
+  - time: 43.886
+    tileIndex: 0
+  - time: 44.2659
+    tileIndex: 1
+  - time: 44.6592
+    tileIndex: 10
+  - time: 45.0902
+    tileIndex: 15
+  - time: 47.9852
+    tileIndex: 0
+  - time: 48.3763
+    tileIndex: 1
+  - time: 48.7539
+    tileIndex: 4
+  - time: 49.138
+    tileIndex: 5
+  - time: 49.5734
+    tileIndex: 4
+  - time: 50.0168
+    tileIndex: 5
+  - time: 50.4264
+    tileIndex: 8
+  - time: 50.8933
+    tileIndex: 9
+  - time: 51.3081
+    tileIndex: 8
+  - time: 51.7668
+    tileIndex: 10
+  - time: 52.284
+    tileIndex: 8
+  - time: 52.7528
+    tileIndex: 11
+  - time: 53.2319
+    tileIndex: 8
+  - time: 53.7438
+    tileIndex: 14
+  - time: 54.385
+    tileIndex: 15
+  - time: 56.0296
+    tileIndex: 3
+  - time: 56.4689
+    tileIndex: 2
+  - time: 56.8674
+    tileIndex: 3
+  - time: 57.2546
+    tileIndex: 2
+  - time: 57.6472
+    tileIndex: 7
+  - time: 58.0415
+    tileIndex: 6
+  - time: 58.4858
+    tileIndex: 7
+  - time: 58.8474
+    tileIndex: 6
+  - time: 59.2867
+    tileIndex: 12
+  - time: 62.6014
+    tileIndex: 4
+  - time: 63.0394
+    tileIndex: 5
+  - time: 63.4552
+    tileIndex: 0
+  - time: 63.8188
+    tileIndex: 1
+  - time: 64.2519
+    tileIndex: 0
+  - time: 64.6206
+    tileIndex: 1
+  - time: 65.0301
+    tileIndex: 4
+  - time: 65.4375
+    tileIndex: 5
+  - time: 65.8233
+    tileIndex: 15
+  - time: 69.2171
+    tileIndex: 0
+  - time: 69.6084
+    tileIndex: 1
+  - time: 69.9688
+    tileIndex: 4
+  - time: 70.3386
+    tileIndex: 5
+  - time: 70.7188
+    tileIndex: 4
+  - time: 71.0702
+    tileIndex: 5
+  - time: 71.4604
+    tileIndex: 0
+  - time: 71.8277
+    tileIndex: 1
+  - time: 72.2345
+    tileIndex: 15
+  - time: 73.112
+    tileIndex: 10
+  - time: 73.968
+    tileIndex: 5
+  - time: 74.7955
+    tileIndex: 0
+  - time: 75.6629
+    tileIndex: 0
+  - time: 76.1278
+    tileIndex: 1
+  - time: 76.6204
+    tileIndex: 3
+  - time: 77.0544
+    tileIndex: 2
+  - time: 77.6054
+    tileIndex: 4
+  - time: 78.3225
+    tileIndex: 5
+  - time: 79.0254
+    tileIndex: 7
+  - time: 79.6145
+    tileIndex: 6
+  - time: 80.1572
+    tileIndex: 0
+  - time: 80.7183
+    tileIndex: 10
+  - time: 81.2136
+    tileIndex: 0
+  - time: 81.8143
+    tileIndex: 15
+  - time: 84.1708
+    tileIndex: 0
+  - time: 84.6288
+    tileIndex: 1
+  - time: 85.0618
+    tileIndex: 4
+  - time: 85.588
+    tileIndex: 5
+  - time: 86.091
+    tileIndex: 8
+  - time: 86.5319
+    tileIndex: 9
+  - time: 87.1098
+    tileIndex: 10
+  - time: 87.6932
+    tileIndex: 11
+  - time: 88.4196
+    tileIndex: 15
   song: {fileID: 8300000, guid: 6e71fe23e7bbfe24996c964da815bd09, type: 3}
   mapName: Heartbreaking
   copyright: "Music from https://filmmusic.io\r\n\"Heartbreaking\" by Kevin MacLeod
