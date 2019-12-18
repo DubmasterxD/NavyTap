@@ -13,14 +13,14 @@ namespace PadTap.Maps
 
         public List<Tile> tiles { get; private set; } = null;
 
-        private Game game = null;
+        private GameManager game = null;
 
         private void Awake()
         {
-            game = FindObjectOfType<Game>();
+            game = FindObjectOfType<GameManager>();
             if (game == null)
             {
-                Logger.NoComponentFound(typeof(Game));
+                Logger.NoComponentFound(typeof(GameManager));
             }
         }
 

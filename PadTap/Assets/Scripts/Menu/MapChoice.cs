@@ -1,11 +1,20 @@
 ﻿using PadTap.Core;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace PadTap.Menu
 {
     public class MapChoice : MonoBehaviour
     {
-        [SerializeField] Map map = null;
+        [SerializeField] Text mapName = null;
+
+        Map map = null;
+
+        public void SetMap(Map newMap)
+        {
+            map = newMap;
+            ActualizeMapInfo();
+        }
 
         public void ChooseMap()
         {
@@ -17,6 +26,14 @@ namespace PadTap.Menu
             else
             {
                 Logger.NoComponentFound(typeof(Scene));
+            }
+        }
+
+        private void ActualizeMapInfo()
+        {
+            if (map != null)
+            {
+                mapName.text = map.mapName;
             }
         }
     }

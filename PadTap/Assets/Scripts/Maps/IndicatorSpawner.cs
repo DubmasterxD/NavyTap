@@ -11,17 +11,17 @@ namespace PadTap.Maps
 
         public Map map { get; private set; } = null;
 
-        private Game game = null;
+        private GameManager game = null;
         private TileSpawner tileSpawner = null;
         private Coroutine spawning = null;
 
         private void Awake()
         {
-            game = FindObjectOfType<Game>();
+            game = FindObjectOfType<GameManager>();
             tileSpawner = GetComponent<TileSpawner>();
             if (game == null)
             {
-                Logger.NoComponentFound(typeof(Game));
+                Logger.NoComponentFound(typeof(GameManager));
             }
         }
 

@@ -23,14 +23,14 @@ namespace PadTap.Core
 
         public void StartMap(Map map)
         {
-            Game game = FindObjectOfType<Game>();
+            GameManager game = FindObjectOfType<GameManager>();
             if (game != null)
             {
                 game.StartGame(map, waitTimeAfterLoading);
             }
             else
             {
-                Logger.NoComponentFound(typeof(Game));
+                Logger.NoComponentFound(typeof(GameManager));
                 return;
             }
         }
