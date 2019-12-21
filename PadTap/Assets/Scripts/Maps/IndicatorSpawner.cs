@@ -13,7 +13,6 @@ namespace PadTap.Maps
 
         private GameManager game = null;
         private TileSpawner tileSpawner = null;
-        private Coroutine spawning = null;
 
         private void Awake()
         {
@@ -44,7 +43,7 @@ namespace PadTap.Maps
         public void StartGame(Map newMap)
         {
             map = newMap;
-            spawning = StartCoroutine(SpawnContinuously());
+            SpawnIndicators();
             if(map!=null)
             {
                 StartCoroutine(PlaySong(map.song));
@@ -57,47 +56,16 @@ namespace PadTap.Maps
 
         public void GameOver()
         {
-            StopCoroutine(spawning);
             game.GameOver();
         }
 
-        private IEnumerator SpawnContinuously()
+        private void SpawnIndicators()
         {
             if (map != null)
             {
-                int index = 0;
-                while (index < map.GetPointsCount())
+                foreach (Map.Point point in map.points)
                 {
-                    yield return WaitToSpawnIndicator(index);
-                    int tileIndexToSpawn = map.points[index].tileIndex;
-                    if (indicatorPrefab != null)
-                    {
-                        tileSpawner.tiles[tileIndexToSpawn].Spawn(indicatorPrefab, map.indicatorLifespan);
-                    }
-                    index++;
-                }
-            }
-            else
-            {
-                Logger.NotAssigned(typeof(Map), GetType(), name);
-            }
-        }
-
-        private IEnumerator WaitToSpawnIndicator(int index)
-        {
-            if (map != null)
-            {
-                if (index != 0)
-                {
-                    float previousTime = map.points[index - 1].time;
-                    yield return new WaitForSeconds(map.points[index].time - previousTime);
-                }
-                else
-                {
-                    if (GetFirstIndicatorSpawnTime() > 0)
-                    {
-                        yield return new WaitForSeconds(GetFirstIndicatorSpawnTime());
-                    }
+                    tileSpawner.tiles[point.tileIndex].SpawnIn(indicatorPrefab, map.indicatorLifespan, point.time - map.GetPerfectScore() * map.indicatorLifespan);
                 }
             }
             else

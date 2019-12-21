@@ -9,6 +9,8 @@ namespace PadTap.Maps
         IndicatorSpawner spawner;
         Animator animator;
 
+        bool clicked = false;
+
         private void Awake()
         {
             spawner = FindObjectOfType<IndicatorSpawner>();
@@ -19,17 +21,17 @@ namespace PadTap.Maps
             }
         }
 
-        public void StartIndicator(float lifespan)
+        public IEnumerator StartIndicatorIn(float time, float lifespan)
         {
-            StartCoroutine(AutoDestroyIn(lifespan));
+            animator.speed = 0;
+            yield return new WaitForSeconds(time);
             ChangeAnimatorSpeedFromLifespan(lifespan);
-        }
-
-        IEnumerator AutoDestroyIn(float seconds)
-        {
-            yield return new WaitForSeconds(seconds);
-            GameOver();
-            Destroy(gameObject);
+            yield return new WaitForSeconds(lifespan);
+            if (clicked == false)
+            {
+                GameOver();
+                Destroy(gameObject);
+            }
         }
 
         public void ChangeAnimatorSpeedFromLifespan(float lifespan)
@@ -48,6 +50,7 @@ namespace PadTap.Maps
 
         public void Click()
         {
+            clicked = true;
             if (spawner != null && TimeAlive() > spawner.map.threshold)
             {
                 //TODO Points

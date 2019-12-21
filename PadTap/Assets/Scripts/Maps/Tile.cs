@@ -31,12 +31,12 @@ namespace PadTap.Maps
             }
         }
 
-        public void Spawn(Indicator toSpawn, float lifespan)
+        public void SpawnIn(Indicator toSpawn, float lifespan, float time)
         {
             if (spawnPoint != null)
             {
                 Indicator indicator = Instantiate(toSpawn, spawnPoint);
-                indicator.StartIndicator(lifespan);
+                StartCoroutine(indicator.StartIndicatorIn(time, lifespan));
             }
             else
             {
