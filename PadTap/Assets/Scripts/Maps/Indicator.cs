@@ -53,13 +53,25 @@ namespace PadTap.Maps
             clicked = true;
             if (spawner != null && TimeAlive() > spawner.map.threshold)
             {
-                //TODO Points
+                if (GotPerfectScore())
+                {
+                    FindObjectOfType<Points>().AddPoints(100);
+                }
+                else
+                {
+                    FindObjectOfType<Points>().AddPoints(30);
+                }
             }
             else
             {
                 GameOver();
             }
             Destroy(gameObject);
+        }
+
+        private bool GotPerfectScore()
+        {
+            return TimeAlive() >= spawner.map.GetPerfectScore() - spawner.map.GetPerfectScoreAcceptableDifference() && TimeAlive() <= spawner.map.GetPerfectScore() + spawner.map.GetPerfectScoreAcceptableDifference();
         }
 
         public float TimeAlive()

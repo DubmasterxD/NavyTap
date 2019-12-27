@@ -110,13 +110,7 @@ namespace PadTap.MapMaker
                     points.Remove(point);
                 }
                 TimelinePoint[] childs = transform.GetComponentsInChildren<TimelinePoint>();
-
-
-
-
-
-
-
+                
                 if (childs.Length > points.Count)
                 {
                     points.Clear();

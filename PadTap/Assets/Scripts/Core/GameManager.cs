@@ -8,6 +8,9 @@ namespace PadTap.Core
         public delegate void OnGameStart(Map map);
         public event OnGameStart onGameStart;
 
+        [SerializeField] Map testingMap = null;
+        private bool isPlaying = false;
+
         private void Awake()
         {
             if (FindObjectsOfType<GameManager>().Length == 1)
@@ -20,8 +23,20 @@ namespace PadTap.Core
             }
         }
 
+        private void Update()
+        {
+            if (!isPlaying)
+            {
+                if (Input.GetKeyDown(KeyCode.S))
+                {
+                    StartGame(testingMap, 0);
+                }
+            }
+        }
+
         public void StartGame(Map map, float timeToStart)
         {
+            isPlaying = true;
             StartCoroutine(StartGameAfter(map, timeToStart));
         }
 
