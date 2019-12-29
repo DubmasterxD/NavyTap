@@ -5,6 +5,7 @@ using PadTap.Core;
 
 namespace PadTap.MapMaker
 {
+#if UNITY_EDITOR
     public class MainWindow : EditorWindow
     {
         private static Vector2 windowSize = new Vector2(400, 600);
@@ -724,4 +725,5 @@ namespace PadTap.MapMaker
             }
         }
     }
+#endif
 }

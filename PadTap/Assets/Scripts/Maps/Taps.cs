@@ -6,19 +6,42 @@ namespace PadTap.Maps
     {
         private void Update()
         {
-            Tap();
+            Click();
+            //Touch();
         }
 
-        private void Tap()
+        private void Click()
         {
             if (Input.GetMouseButtonDown(0))
             {
                 RaycastHit2D[] hits = Physics2D.RaycastAll(GetMousePosition(), Camera.main.transform.forward, 20f);
-                Indicator indicatorToClick = GetIndicatorHit(hits);
-                if (indicatorToClick != null)
+                Tapped(hits);
+            }
+        }
+
+        private void Touch()
+        {
+            for(int i=0; i < Input.touchCount; i++)
+            {
+                if(Input.GetTouch(i).phase == TouchPhase.Began)
                 {
-                    indicatorToClick.Click();
+                    RaycastHit2D[] hits = Physics2D.RaycastAll(GetTouchPosition(Input.GetTouch(i)), Camera.main.transform.forward, 20f);
+                    Tapped(hits);
                 }
+            }
+        }
+
+        private Vector3 GetTouchPosition(Touch touch)
+        {
+            return Camera.main.ScreenToWorldPoint(touch.position);
+        }
+
+        private void Tapped(RaycastHit2D[] hits)
+        {
+            Indicator indicatorToClick = GetIndicatorHit(hits);
+            if (indicatorToClick != null)
+            {
+                indicatorToClick.Click();
             }
         }
 
