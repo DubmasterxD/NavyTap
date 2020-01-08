@@ -7,6 +7,7 @@ namespace PadTap.Maps
     public class TileSpawner : MonoBehaviour
     {
         [SerializeField] private Tile tilePrefab = null;
+        [SerializeField] private Transform spawnPoint = null;
         private float originalTileSize = 2.5f;
         private float tileSize = 0;
         private float mapSize = 10;
@@ -40,6 +41,7 @@ namespace PadTap.Maps
             {
                 ShowTiles(map.tilesRows, map.tilesColumns);
                 SetThresholds(map.threshold, map.GetPerfectScore(), map.GetPerfectScoreAcceptableDifference());
+                FindObjectOfType<BombSpawner>().SpawnBombs(map);
             }
             else
             {
@@ -64,7 +66,7 @@ namespace PadTap.Maps
                         posX += mapSize / 2 * (1 - Mathf.Clamp01(columns / (float)rows));
                         float posY = mapSize / 2 - tileSize * row;
                         posY -= mapSize / 2 * (1 - Mathf.Clamp01(rows / (float)columns));
-                        tiles[index].transform.position = new Vector3(posX, posY);
+                        tiles[index].transform.localPosition = new Vector3(posX, posY);
                     }
                 }
             }
@@ -86,7 +88,7 @@ namespace PadTap.Maps
                 {
                     for (int i = tiles.Count; i < size; i++)
                     {
-                        tiles.Add(Instantiate(tilePrefab, transform));
+                        tiles.Add(Instantiate(tilePrefab, spawnPoint));
                     }
                 }
                 else
