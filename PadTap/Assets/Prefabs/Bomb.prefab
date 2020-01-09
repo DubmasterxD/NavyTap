@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4429304348136062463}
   - component: {fileID: 4739742548660639967}
+  - component: {fileID: 6697958550860746039}
   m_Layer: 0
   m_Name: Bomb
   m_TagString: Untagged
@@ -67,9 +68,9 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 3f4069863ed9b00488cc3cbaf6e9346a, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_SortingOrder: 300
+  m_Sprite: {fileID: 21300000, guid: 9406d1066b434934bbea8b22bf7dbb09, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -79,3 +80,15 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &6697958550860746039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5083135130102447757}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e55b6bece0882d4bb9ba19c9cfb8a60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -65,7 +65,7 @@ namespace PadTap.Maps
             {
                 foreach (Map.Point point in map.points)
                 {
-                    tileSpawner.tiles[point.tileIndex].SpawnIn(indicatorPrefab, map.indicatorLifespan, point.time - map.GetPerfectScore() * map.indicatorLifespan);
+                    tileSpawner.tiles[point.tileIndex].SpawnIn(indicatorPrefab, map.indicatorLifespan, point.time + (1 - map.GetPerfectScore()) * map.indicatorLifespan);
                 }
             }
             else
@@ -76,10 +76,11 @@ namespace PadTap.Maps
 
         private IEnumerator PlaySong(AudioClip song)
         {
-            if (GetFirstIndicatorSpawnTime() < 0)
-            {
-                yield return new WaitForSeconds(-GetFirstIndicatorSpawnTime());
-            }
+            //if (GetFirstIndicatorSpawnTime() < 0)
+            //{
+            //    yield return new WaitForSeconds(-GetFirstIndicatorSpawnTime());
+            //}
+            yield return new WaitForSeconds(map.indicatorLifespan);
             FindObjectOfType<Audio>().Play(song);
             if (map != null)
             {

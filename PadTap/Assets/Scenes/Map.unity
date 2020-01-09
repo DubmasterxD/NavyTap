@@ -559,7 +559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0515193f18edfdf498bdc0c878f74fb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bombPrefab: {fileID: 5083135130102447757, guid: e1b2158e66d489d4c9dea56dbc448e27,
+  bombPrefab: {fileID: 6697958550860746039, guid: e1b2158e66d489d4c9dea56dbc448e27,
     type: 3}
   bombs: {fileID: 1960403944}
 --- !u!1 &1306213537

@@ -9,7 +9,7 @@ namespace PadTap.Maps
         [SerializeField] private Tile tilePrefab = null;
         [SerializeField] private Transform spawnPoint = null;
         private float originalTileSize = 2.5f;
-        private float tileSize = 0;
+        public float tileSize { get; private set; } = 0;
         private float mapSize = 10;
 
         public List<Tile> tiles { get; private set; } = null;
@@ -41,7 +41,6 @@ namespace PadTap.Maps
             {
                 ShowTiles(map.tilesRows, map.tilesColumns);
                 SetThresholds(map.threshold, map.GetPerfectScore(), map.GetPerfectScoreAcceptableDifference());
-                FindObjectOfType<BombSpawner>().SpawnBombs(map);
             }
             else
             {
