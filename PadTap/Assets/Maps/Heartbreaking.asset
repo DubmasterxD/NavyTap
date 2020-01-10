@@ -15,7 +15,7 @@ MonoBehaviour:
   tilesRows: 4
   tilesColumns: 4
   threshold: 0.5
-  indicatorLifespan: 3
+  indicatorLifespan: 1
   points:
   - time: 1.4009
     tileIndex: 0
