@@ -12,7 +12,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.NotAssigned(typeof(RectTransform), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(RectTransform), GetType(), name));
             }
         }
 

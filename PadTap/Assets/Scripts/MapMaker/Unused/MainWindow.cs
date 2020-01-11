@@ -108,7 +108,7 @@ namespace PadTap.MapMaker
                 visualizationManager = FindObjectOfType<Visualizer>();
                 if (visualizationManager == null)
                 {
-                    Logger.NoComponentFound(typeof(Visualizer));
+                    Debug.LogError(Logger.NoComponentFound(typeof(Visualizer)));
                 }
             }
         }
@@ -130,7 +130,7 @@ namespace PadTap.MapMaker
                 audioSource = FindObjectOfType<AudioSource>();
                 if (audioSource == null)
                 {
-                    Logger.NoComponentFound(typeof(AudioSource));
+                    Debug.LogError(Logger.NoComponentFound(typeof(AudioSource)));
                 }
             }
         }

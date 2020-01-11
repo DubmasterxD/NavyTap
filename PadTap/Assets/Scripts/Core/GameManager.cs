@@ -8,7 +8,7 @@ namespace PadTap.Core
         public delegate void OnGameStart(Map map);
         public event OnGameStart onGameStart;
 
-        [SerializeField] Map testingMap = null;
+        [SerializeField] Map chosenMap = null;
         private bool isPlaying = false;
 
         private void Awake()
@@ -23,27 +23,15 @@ namespace PadTap.Core
             }
         }
 
-        private void Update()
+        public void ChooseMap(Map map)
         {
-            if (!isPlaying)
-            {
-                if (Input.GetKeyDown(KeyCode.S))
-                {
-                    StartGame(testingMap, 0);
-                }
-            }
+            chosenMap = map;
         }
 
-        public void StartGame(Map map, float timeToStart)
+        public void StartGame()
         {
             isPlaying = true;
-            StartCoroutine(StartGameAfter(map, timeToStart));
-        }
-
-        public IEnumerator StartGameAfter(Map map, float timeToStart)
-        {
-            yield return new WaitForSeconds(timeToStart);
-            onGameStart(map);
+            onGameStart(chosenMap);
         }
 
         public void GameOver()
@@ -55,7 +43,7 @@ namespace PadTap.Core
             }
             else
             {
-                Logger.NoComponentFound(typeof(Scene));
+                Debug.LogError(Logger.NoComponentFound(typeof(Scene)));
             }
         }
     }

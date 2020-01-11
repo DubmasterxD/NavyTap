@@ -20,7 +20,7 @@ namespace PadTap.Maps
             tileSpawner = GetComponent<TileSpawner>();
             if (game == null)
             {
-                Logger.NoComponentFound(typeof(GameManager));
+                Debug.LogError(Logger.NoComponentFound(typeof(GameManager)));
             }
         }
 
@@ -70,7 +70,7 @@ namespace PadTap.Maps
             }
             else
             {
-                Logger.NotAssigned(typeof(Map), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(Map), GetType(), name));
             }
         }
 
@@ -97,7 +97,7 @@ namespace PadTap.Maps
             }
             else
             {
-                Logger.NotAssigned(typeof(Map), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(Map), GetType(), name));
                 return 0;
             }
         }

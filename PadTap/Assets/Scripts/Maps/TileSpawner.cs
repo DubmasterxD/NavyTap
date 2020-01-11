@@ -21,7 +21,7 @@ namespace PadTap.Maps
             game = FindObjectOfType<GameManager>();
             if (game == null)
             {
-                Logger.NoComponentFound(typeof(GameManager));
+                Debug.LogError(Logger.NoComponentFound(typeof(GameManager)));
             }
         }
 
@@ -40,7 +40,7 @@ namespace PadTap.Maps
             if (map != null)
             {
                 ShowTiles(map.tilesRows, map.tilesColumns);
-                SetThresholds(map.threshold, map.GetPerfectScore(), map.GetPerfectScoreAcceptableDifference());
+                SetPerfectScores(map.GetPerfectScore(), map.GetPerfectScoreAcceptableDifference());
             }
             else
             {
@@ -92,7 +92,7 @@ namespace PadTap.Maps
                 }
                 else
                 {
-                    Logger.NotAssigned(typeof(Tile), GetType(), name);
+                    Debug.LogError(Logger.NotAssigned(typeof(Tile), GetType(), name));
                 }
             }
             foreach (Tile tile in tiles)
@@ -105,13 +105,12 @@ namespace PadTap.Maps
             }
         }
 
-        private void SetThresholds(float threshold, float perferctScore, float perfectScoreDifference)
+        private void SetPerfectScores(float perferctScore, float perfectScoreDifference)
         {
             if (tiles != null)
             {
                 foreach (Tile tile in tiles)
                 {
-                    tile.SetThreshold(threshold);
                     tile.SetPerfectScore(perferctScore, perfectScoreDifference);
                 }
             }

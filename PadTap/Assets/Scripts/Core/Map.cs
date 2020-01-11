@@ -78,7 +78,7 @@ namespace PadTap.Core
             }
             else
             {
-                Logger.NotAssigned(typeof(List<Point>), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(List<Point>), GetType(), name));
                 return 0;
             }
         }

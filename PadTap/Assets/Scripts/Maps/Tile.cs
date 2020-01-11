@@ -5,29 +5,26 @@ namespace PadTap.Maps
     public class Tile : MonoBehaviour
     {
         [SerializeField] Transform spawnPoint = null;
-        [SerializeField] Threshold threshold = null;
-
-        public void SetThreshold(float value)
-        {
-            if (threshold != null)
-            {
-                threshold.SetThreshold(value);
-            }
-            else
-            {
-                Logger.NotAssigned(typeof(Threshold), GetType(), name);
-            }
-        }
+        [SerializeField] Transform perfectScoreMax = null;
+        [SerializeField] Transform perfectScoreMin = null;
 
         public void SetPerfectScore(float perfectScore, float perfectScoreDifference)
         {
-            if (threshold != null)
+            float newMaxPerfectScore = perfectScore + perfectScoreDifference;
+            SetScaleOfTransform(perfectScoreMax, newMaxPerfectScore);
+            float newMinPerfectScore = perfectScore - perfectScoreDifference;
+            SetScaleOfTransform(perfectScoreMin, newMinPerfectScore);
+        }
+
+        private void SetScaleOfTransform(Transform transform, float newScale)
+        {
+            if (transform != null)
             {
-                threshold.SetPerfectScoreLimits(perfectScore, perfectScoreDifference);
+                transform.localScale = new Vector3(newScale, newScale, newScale);
             }
             else
             {
-                Logger.NotAssigned(typeof(Threshold), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(Transform), GetType(), name));
             }
         }
 
@@ -40,7 +37,7 @@ namespace PadTap.Maps
             }
             else
             {
-                Logger.NotAssigned(typeof(Transform), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(Transform), GetType(), name));
             }
         }
     }

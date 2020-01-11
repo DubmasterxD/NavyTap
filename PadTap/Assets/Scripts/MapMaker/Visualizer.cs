@@ -14,7 +14,6 @@ namespace PadTap.MapMaker
         public void ManualUpdate(Map map, float time, float deltaTime, List<Map.Point> selection)
         {
             SetVisibleTiles(map.tilesRows, map.tilesColumns);
-            ChageThreshold(map.threshold);
             ChangePerfectScore(map.GetPerfectScore(), map.GetPerfectScoreAcceptableDifference());
             ChangeSpeedFromFilespan(map.indicatorLifespan);
             Animate(deltaTime);
@@ -30,19 +29,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.NotAssigned(typeof(TileSpawner), GetType(), name);
-            }
-        }
-
-        public void ChageThreshold(float threshold)
-        {
-            if (indicatorSpeedVisualizer != null)
-            {
-                indicatorSpeedVisualizer.ChangeThreshold(threshold);
-            }
-            else
-            {
-                Logger.NotAssigned(typeof(IndicatorSpeedVisualizer), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(TileSpawner), GetType(), name));
             }
         }
 
@@ -54,7 +41,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.NotAssigned(typeof(IndicatorSpeedVisualizer), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(IndicatorSpeedVisualizer), GetType(), name));
             }
         }
 
@@ -66,7 +53,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.NotAssigned(typeof(IndicatorSpeedVisualizer), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(IndicatorSpeedVisualizer), GetType(), name));
             }
         }
 
@@ -78,7 +65,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.NotAssigned(typeof(IndicatorSpeedVisualizer), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(IndicatorSpeedVisualizer), GetType(), name));
             }
         }
 
@@ -90,7 +77,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.NotAssigned(typeof(Timelines), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(Timelines), GetType(), name));
             }
         }
 
@@ -102,7 +89,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.NotAssigned(typeof(Timelines), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(Timelines), GetType(), name));
             }
         }
 
@@ -114,7 +101,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.NotAssigned(typeof(Timelines), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(Timelines), GetType(), name));
             }
         }
 
@@ -126,7 +113,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.NotAssigned(typeof(Timelines), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(Timelines), GetType(), name));
             }
         }
 
@@ -138,7 +125,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.NotAssigned(typeof(Timelines), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(Timelines), GetType(), name));
             }
         }
 
@@ -150,7 +137,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.NotAssigned(typeof(Timelines), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(Timelines), GetType(), name));
             }
         }
 
@@ -162,7 +149,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.NotAssigned(typeof(Timelines), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(Timelines), GetType(), name));
             }
         }
 
@@ -174,7 +161,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.NotAssigned(typeof(Timelines), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(Timelines), GetType(), name));
             }
         }
 
@@ -186,7 +173,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.NotAssigned(typeof(Timelines), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(Timelines), GetType(), name));
             }
         }
 
@@ -198,7 +185,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.NotAssigned(typeof(Timelines), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(Timelines), GetType(), name));
             }
         }
 
@@ -215,7 +202,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.NotAssigned(typeof(Timelines), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(Timelines), GetType(), name));
             }
         }
     }

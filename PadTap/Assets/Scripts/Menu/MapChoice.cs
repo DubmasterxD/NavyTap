@@ -25,7 +25,7 @@ namespace PadTap.Menu
             }
             else
             {
-                Logger.NoComponentFound(typeof(Scene));
+                Debug.LogError(Logger.NoComponentFound(typeof(Scene)));
             }
         }
 

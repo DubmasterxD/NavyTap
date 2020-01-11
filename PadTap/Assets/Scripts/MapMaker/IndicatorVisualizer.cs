@@ -33,7 +33,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.NotAssigned(typeof(SpriteRenderer), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(SpriteRenderer), GetType(), name));
             }
         }
 

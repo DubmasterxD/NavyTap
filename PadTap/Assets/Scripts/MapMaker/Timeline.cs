@@ -40,11 +40,11 @@ namespace PadTap.MapMaker
             {
                 if (map == null)
                 {
-                    Logger.ReceivedNull(typeof(Map));
+                    Debug.LogWarning(Logger.ReceivedNull(typeof(Map)));
                 }
                 if (map.points == null)
                 {
-                    Logger.ReceivedNull(typeof(List<Map.Point>));
+                    Debug.LogWarning(Logger.ReceivedNull(typeof(List<Map.Point>)));
                 }
                 if (map.song == null)
                 {
@@ -78,11 +78,11 @@ namespace PadTap.MapMaker
             {
                 if (prefab == null)
                 {
-                    Logger.NotAssigned(typeof(TimelinePoint), GetType(), name);
+                    Debug.LogError(Logger.NotAssigned(typeof(TimelinePoint), GetType(), name));
                 }
                 if (space == null)
                 {
-                    Logger.NotAssigned(typeof(RectTransform), GetType(), name);
+                    Debug.LogError(Logger.NotAssigned(typeof(RectTransform), GetType(), name));
                 }
             }
         }
@@ -122,7 +122,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.ReceivedNull(typeof(List<Map.Point>));
+                Debug.LogWarning(Logger.ReceivedNull(typeof(List<Map.Point>)));
             }
         }
 
@@ -187,7 +187,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.NotAssigned(typeof(Transform), GetType(), name);
+                Debug.LogError(Logger.NotAssigned(typeof(Transform), GetType(), name));
             }
         }
 

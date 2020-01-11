@@ -6,21 +6,26 @@ namespace PadTap.MapMaker
     public class IndicatorSpeedVisualizer : MonoBehaviour
     {
         [SerializeField] IndicatorVisualizer indicatorVisualizer = null;
-        [SerializeField] Threshold threshold = null;
-
-        public void ChangeThreshold(float value)
-        {
-            if (threshold != null)
-            {
-                threshold.SetThreshold(value);
-            }
-        }
+        [SerializeField] Transform perfectScoreMax = null;
+        [SerializeField] Transform perfectScoreMin = null;
 
         public void ChangePerfectScore(float perfectScore, float perfectScoreDifference)
         {
-            if (threshold != null)
+            float newMaxPerfectScore = perfectScore + perfectScoreDifference;
+            SetScaleOfTransform(perfectScoreMax, newMaxPerfectScore);
+            float newMinPerfectScore = perfectScore - perfectScoreDifference;
+            SetScaleOfTransform(perfectScoreMin, newMinPerfectScore);
+        }
+
+        private void SetScaleOfTransform(Transform transform, float newScale)
+        {
+            if (transform != null)
             {
-                threshold.SetPerfectScoreLimits(perfectScore, perfectScoreDifference);
+                transform.localScale = new Vector3(newScale, newScale, newScale);
+            }
+            else
+            {
+                Debug.LogError(Logger.NotAssigned(typeof(Transform), GetType(), name));
             }
         }
 

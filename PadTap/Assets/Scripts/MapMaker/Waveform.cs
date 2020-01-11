@@ -81,7 +81,7 @@ namespace PadTap.MapMaker
             }
             else
             {
-                Logger.ReceivedNull(typeof(AudioClip));
+                Debug.LogWarning(Logger.ReceivedNull(typeof(AudioClip)));
             }
         }
 

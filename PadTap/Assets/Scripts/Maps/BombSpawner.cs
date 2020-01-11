@@ -18,7 +18,7 @@ namespace PadTap.Maps
             game = FindObjectOfType<GameManager>();
             if (game == null)
             {
-                Logger.NoComponentFound(typeof(GameManager));
+                Debug.LogError(Logger.NoComponentFound(typeof(GameManager)));
             }
         }
 

@@ -6,7 +6,6 @@ namespace PadTap.Core
     public class Scene : MonoBehaviour
     {
         [SerializeField] int mapSceneIndex = 1;
-        float waitTimeAfterLoading = 1f;
 
         public void LoadMap(Map map)
         {
@@ -16,21 +15,21 @@ namespace PadTap.Core
             }
             else
             {
-                Logger.Error("No scene with index " + mapSceneIndex + " assigned to build");
+                Debug.LogError("No scene with index " + mapSceneIndex + " assigned to build");
             }
-            StartMap(map);
+            ChooseMap(map);
         }
 
-        public void StartMap(Map map)
+        public void ChooseMap(Map map)
         {
             GameManager game = FindObjectOfType<GameManager>();
             if (game != null)
             {
-                game.StartGame(map, waitTimeAfterLoading);
+                game.ChooseMap(map);
             }
             else
             {
-                Logger.NoComponentFound(typeof(GameManager));
+                Debug.LogError(Logger.NoComponentFound(typeof(GameManager)));
                 return;
             }
         }
