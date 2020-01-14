@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using PadTap.Core;
+using System;
+using UnityEngine.UI;
 
 namespace PadTap.Maps
 {
@@ -9,7 +11,7 @@ namespace PadTap.Maps
         {
             GameManager gameManager = FindObjectOfType<GameManager>();
             gameManager.StartGame();
-            gameObject.SetActive(false);
+            GetComponent<Button>().interactable = false;
         }
     }
 }
