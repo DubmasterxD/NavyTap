@@ -28,7 +28,7 @@ namespace PadTap.Maps
         {
             if (game != null)
             {
-                game.onGameStart += StartGame;
+                game.onStartSong += SongStarted;
             }
         }
 
@@ -36,14 +36,14 @@ namespace PadTap.Maps
         {
             if (game != null)
             {
-                game.onGameStart -= StartGame;
+                game.onStartSong -= SongStarted;
             }
         }
 
-        public void StartGame(Map newMap)
+        public void SongStarted(Map newMap)
         {
             map = newMap;
-            SpawnIndicators();
+            StartCoroutine(SpawnIndicators());
             if(map!=null)
             {
                 StartCoroutine(PlaySong(map.song));
@@ -59,13 +59,19 @@ namespace PadTap.Maps
             game.GameOver();
         }
 
-        private void SpawnIndicators()
+        private IEnumerator SpawnIndicators()
         {
             if (map != null)
             {
+                int count = 0;
                 foreach (Map.Point point in map.points)
                 {
-                    tileSpawner.tiles[point.tileIndex].SpawnIn(indicatorPrefab, map.indicatorLifespan, point.time + (1 - map.GetPerfectScore()) * map.indicatorLifespan);
+                    tileSpawner.tiles[point.tileIndex].SpawnIndicator(indicatorPrefab, map.indicatorLifespan, point.time + (1 - map.GetPerfectScore()) * map.indicatorLifespan);
+                    count++;
+                    if (count % 10 == 0)
+                    {
+                        yield return null;
+                    }
                 }
             }
             else

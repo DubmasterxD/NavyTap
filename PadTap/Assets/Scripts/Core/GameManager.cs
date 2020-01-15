@@ -5,8 +5,10 @@ namespace PadTap.Core
 {
     public class GameManager : MonoBehaviour
     {
-        public delegate void OnGameStart(Map map);
-        public event OnGameStart onGameStart;
+        public delegate IEnumerator OnPrepareSong(Map map);
+        public event OnPrepareSong onPrepareSong;
+        public delegate void OnStartSong(Map map);
+        public event OnStartSong onStartSong;
 
         [SerializeField] Map chosenMap = null;
         private bool isPlaying = false;
@@ -28,10 +30,15 @@ namespace PadTap.Core
             chosenMap = map;
         }
 
-        public void StartGame()
+        public void PrepareSong()
+        {
+            StartCoroutine(onPrepareSong(chosenMap));
+        }
+
+        public void StartSong()
         {
             isPlaying = true;
-            onGameStart(chosenMap);
+            onStartSong(chosenMap);
         }
 
         public void GameOver()

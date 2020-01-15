@@ -1,4 +1,5 @@
 ﻿using PadTap.Core;
+using System.Collections;
 using UnityEngine;
 
 namespace PadTap.Maps
@@ -24,12 +25,12 @@ namespace PadTap.Maps
 
         private void OnEnable()
         {
-            game.onGameStart += StartGame;
+            game.onStartSong += SongStarted;
         }
 
         private void OnDisable()
         {
-            game.onGameStart -= StartGame;
+            game.onStartSong -= SongStarted;
         }
 
         private void Update()
@@ -40,15 +41,16 @@ namespace PadTap.Maps
             }
         }
 
-        private void StartGame(Map map)
+        private void SongStarted(Map map)
         {
             fallingSpeed = basicFallingSpeed / map.indicatorLifespan;
-            SpawnBombs(map);
             isPlaying = true;
+            StartCoroutine(SpawnBombs(map));
         }
 
-        private void SpawnBombs(Map map)
+        private IEnumerator SpawnBombs(Map map)
         {
+            int count = 0;
             foreach(Map.Point point in map.points)
             {
                 Bomb bomb = Instantiate(bombPrefab, bombs);
@@ -56,6 +58,11 @@ namespace PadTap.Maps
                 float positionX = FindObjectOfType<TileSpawner>().tiles[point.tileIndex].transform.position.x + FindObjectOfType<TileSpawner>().tileSize / 2;
                 float positionY = FindObjectOfType<TileSpawner>().tiles[point.tileIndex].transform.position.y - FindObjectOfType<TileSpawner>().tileSize / 2 + (point.time + map.indicatorLifespan) * fallingSpeed;
                 bomb.transform.position = new Vector3(positionX, positionY, 0);
+                count++;
+                if (count % 10 == 0)
+                {
+                    yield return null;
+                }
             }
         }
     }

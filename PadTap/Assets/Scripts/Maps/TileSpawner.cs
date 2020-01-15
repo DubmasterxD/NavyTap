@@ -1,4 +1,5 @@
 ﻿using PadTap.Core;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,15 +7,16 @@ namespace PadTap.Maps
 {
     public class TileSpawner : MonoBehaviour
     {
-        [SerializeField] private Tile tilePrefab = null;
-        [SerializeField] private Transform spawnPoint = null;
-        private float originalTileSize = 2.5f;
+        [SerializeField] Tile tilePrefab = null;
+        [SerializeField] Transform spawnPoint = null;
+        [SerializeField] float showTilesTimeInterval = 0.1f;
+        float originalTileSize = 2.5f;
         public float tileSize { get; private set; } = 0;
-        private float mapSize = 10;
+        float mapSize = 10;
 
         public List<Tile> tiles { get; private set; } = null;
 
-        private GameManager game = null;
+        GameManager game = null;
 
         private void Awake()
         {
@@ -27,20 +29,23 @@ namespace PadTap.Maps
 
         private void OnEnable()
         {
-            game.onGameStart += StartGame;
+            game.onPrepareSong += PrepareTiles;
         }
 
         private void OnDisable()
         {
-            game.onGameStart -= StartGame;
+            game.onPrepareSong -= PrepareTiles;
         }
 
-        private void StartGame(Map map)
+        private IEnumerator PrepareTiles(Map map)
         {
             if (map != null)
             {
-                ShowTiles(map.tilesRows, map.tilesColumns);
+                yield return StartCoroutine(ShowTiles(map.tilesRows, map.tilesColumns));
+                yield return new WaitForSeconds(1);
                 SetPerfectScores(map.GetPerfectScore(), map.GetPerfectScoreAcceptableDifference());
+                yield return new WaitForSeconds(1);
+                game.StartSong();
             }
             else
             {
@@ -48,7 +53,7 @@ namespace PadTap.Maps
             }
         }
 
-        public void ShowTiles(int rows, int columns)
+        public IEnumerator ShowTiles(int rows, int columns)
         {
             CreateList(rows * columns);
             if (rows > 0 && columns > 0)
@@ -66,6 +71,7 @@ namespace PadTap.Maps
                         float posY = mapSize / 2 - tileSize * row;
                         posY -= mapSize / 2 * (1 - Mathf.Clamp01(rows / (float)columns));
                         tiles[index].transform.localPosition = new Vector3(posX, posY);
+                        yield return new WaitForSeconds(showTilesTimeInterval);
                     }
                 }
             }
@@ -99,10 +105,10 @@ namespace PadTap.Maps
             {
                 tile.gameObject.SetActive(false);
             }
-            for (int i = 0; i < size; i++)
-            {
-                tiles[i].gameObject.SetActive(true);
-            }
+            //for (int i = 0; i < size; i++)
+            //{
+            //    tiles[i].gameObject.SetActive(true);
+            //}
         }
 
         private void SetPerfectScores(float perferctScore, float perfectScoreDifference)
