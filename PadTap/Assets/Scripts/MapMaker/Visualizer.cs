@@ -1,9 +1,9 @@
-﻿using PadTap.Core;
-using PadTap.Maps;
+﻿using NavyTap.Core;
+using NavyTap.Maps;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace PadTap.MapMaker
+namespace NavyTap.MapMaker
 {
     public class Visualizer : MonoBehaviour
     {

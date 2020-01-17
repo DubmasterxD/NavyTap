@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace PadTap.Maps
+namespace NavyTap.Maps
 {
     public class Timeline : MonoBehaviour
     {

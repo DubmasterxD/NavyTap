@@ -1,8 +1,8 @@
-﻿using PadTap.Core;
+﻿using NavyTap.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace PadTap.Menu
+namespace NavyTap.Menu
 {
     public class MapChoice : MonoBehaviour
     {

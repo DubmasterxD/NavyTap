@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace PadTap.Core
+namespace NavyTap.Core
 {
     [CreateAssetMenu(fileName = "Map", menuName = "Map", order = 0)]
     public class Map : ScriptableObject

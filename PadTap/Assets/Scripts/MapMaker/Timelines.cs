@@ -1,9 +1,9 @@
-﻿using PadTap.Core;
+﻿using NavyTap.Core;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace PadTap.MapMaker
+namespace NavyTap.MapMaker
 {
     public class Timelines : MonoBehaviour
     {

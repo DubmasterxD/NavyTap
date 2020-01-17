@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PadTap.Maps
+namespace NavyTap.Maps
 {
     [RequireComponent(typeof(AudioSource))]
     public class Audio : MonoBehaviour

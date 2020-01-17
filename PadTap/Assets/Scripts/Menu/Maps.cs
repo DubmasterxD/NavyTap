@@ -1,7 +1,7 @@
-﻿using PadTap.Core;
+﻿using NavyTap.Core;
 using UnityEngine;
 
-namespace PadTap.Menu
+namespace NavyTap.Menu
 {
     public class Maps : MonoBehaviour
     {

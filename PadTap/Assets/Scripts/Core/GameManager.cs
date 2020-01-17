@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace PadTap.Core
+namespace NavyTap.Core
 {
     public class GameManager : MonoBehaviour
     {
-        public delegate IEnumerator OnPrepareSong(Map map);
+        public delegate void OnPrepareSong(Map map);
         public event OnPrepareSong onPrepareSong;
         public delegate void OnStartSong(Map map);
         public event OnStartSong onStartSong;
@@ -32,7 +32,7 @@ namespace PadTap.Core
 
         public void PrepareSong()
         {
-            StartCoroutine(onPrepareSong(chosenMap));
+            onPrepareSong(chosenMap);
         }
 
         public void StartSong()

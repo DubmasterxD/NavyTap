@@ -1,18 +1,18 @@
-﻿using PadTap.Core;
+﻿using NavyTap.Core;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace PadTap.Maps
+namespace NavyTap.Maps
 {
     public class TileSpawner : MonoBehaviour
     {
         [SerializeField] Tile tilePrefab = null;
         [SerializeField] Transform spawnPoint = null;
         [SerializeField] float showTilesTimeInterval = 0.1f;
-        float originalTileSize = 2.5f;
+        const float originalTileSize = 2.56f;
         public float tileSize { get; private set; } = 0;
-        float mapSize = 10;
+        const float mapSize = 10.24f;
 
         public List<Tile> tiles { get; private set; } = null;
 
@@ -37,7 +37,12 @@ namespace PadTap.Maps
             game.onPrepareSong -= PrepareTiles;
         }
 
-        private IEnumerator PrepareTiles(Map map)
+        private void PrepareTiles(Map map)
+        {
+            StartCoroutine(PrepareTilesCoroutine(map));
+        }
+
+        private IEnumerator PrepareTilesCoroutine(Map map)
         {
             if (map != null)
             {
@@ -64,6 +69,7 @@ namespace PadTap.Maps
                     for (int column = 0; column < columns; column++)
                     {
                         int index = column + row * columns;
+                        tiles[index].tileIndex = index;
                         tiles[index].gameObject.SetActive(true);
                         tiles[index].transform.localScale = new Vector3(tileSize / originalTileSize, tileSize / originalTileSize, tileSize / originalTileSize);
                         float posX = -mapSize / 2 + tileSize * column;

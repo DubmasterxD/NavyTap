@@ -1,8 +1,8 @@
-﻿using PadTap.Core;
+﻿using NavyTap.Core;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace PadTap.MapMaker
+namespace NavyTap.MapMaker
 {
     public class Manager : MonoBehaviour
     {

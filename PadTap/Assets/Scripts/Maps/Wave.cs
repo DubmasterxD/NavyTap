@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PadTap.Maps
+namespace NavyTap.Maps
 {
     public class Wave : MonoBehaviour
     {

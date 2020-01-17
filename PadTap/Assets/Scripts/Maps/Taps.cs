@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PadTap.Maps
+namespace NavyTap.Maps
 {
     public class Taps : MonoBehaviour
     {
@@ -43,6 +43,29 @@ namespace PadTap.Maps
             {
                 indicatorToClick.Click();
             }
+            Tile tileClicked = GetTileHit(hits);
+            if (tileClicked != null)
+            {
+                VisualizationButtons buttons = FindObjectOfType<VisualizationButtons>();
+                if (buttons != null)
+                {
+                    buttons.TileClicked(tileClicked.tileIndex);
+                }
+            }
+        }
+
+        private Tile GetTileHit(RaycastHit2D[] hits)
+        {
+            Tile tileClicked = null;
+            foreach (RaycastHit2D hit in hits)
+            {
+                Tile tileHit = hit.collider.gameObject.GetComponent<Tile>();
+                if (tileHit != null)
+                {
+                    tileClicked = tileHit;
+                }
+            }
+            return tileClicked;
         }
 
         private Indicator GetIndicatorHit(RaycastHit2D[] hits)

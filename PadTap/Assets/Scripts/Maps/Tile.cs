@@ -1,13 +1,15 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace PadTap.Maps
+namespace NavyTap.Maps
 {
     public class Tile : MonoBehaviour
     {
         [SerializeField] Transform spawnPoint = null;
         [SerializeField] Transform perfectScoreMax = null;
         [SerializeField] Transform perfectScoreMin = null;
+
+        public int tileIndex = 0;
 
         int settingMaxPerfectScoreAnimatorLayer = 1;
         int settingMinPerfectScoreAnimatorLayer = 2;

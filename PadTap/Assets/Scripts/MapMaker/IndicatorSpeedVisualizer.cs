@@ -1,7 +1,7 @@
-﻿using PadTap.Maps;
+﻿using NavyTap.Maps;
 using UnityEngine;
 
-namespace PadTap.MapMaker
+namespace NavyTap.MapMaker
 {
     public class IndicatorSpeedVisualizer : MonoBehaviour
     {

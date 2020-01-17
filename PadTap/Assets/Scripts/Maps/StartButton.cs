@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
-using PadTap.Core;
+using NavyTap.Core;
 using UnityEngine.UI;
 
-namespace PadTap.Maps
+namespace NavyTap.Maps
 {
     public class StartButton : MonoBehaviour
     {

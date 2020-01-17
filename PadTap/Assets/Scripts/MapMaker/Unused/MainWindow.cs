@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
-using PadTap.Core;
+using NavyTap.Core;
 
-namespace PadTap.MapMaker
+namespace NavyTap.MapMaker
 {
 #if UNITY_EDITOR
     public class MainWindow : EditorWindow

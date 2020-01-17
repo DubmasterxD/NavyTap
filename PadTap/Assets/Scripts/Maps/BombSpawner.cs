@@ -1,8 +1,8 @@
-﻿using PadTap.Core;
+﻿using NavyTap.Core;
 using System.Collections;
 using UnityEngine;
 
-namespace PadTap.Maps
+namespace NavyTap.Maps
 {
     public class BombSpawner : MonoBehaviour
     {

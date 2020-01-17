@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace PadTap.Core
+namespace NavyTap.Core
 {
     public class Scene : MonoBehaviour
     {
