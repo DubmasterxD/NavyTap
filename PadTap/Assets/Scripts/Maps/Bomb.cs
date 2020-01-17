@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Bomb : MonoBehaviour
 {
+    [SerializeField] float explosionLifespan = 0.2f;
+
     public void SetBombTimer(float time)
     {
         StartCoroutine(ExplodeIn(time));
@@ -16,6 +18,7 @@ public class Bomb : MonoBehaviour
 
     private void Explode()
     {
-        gameObject.SetActive(false);
+        FindObjectOfType<Explosions>().MakeExplosion(transform.position);
+        Destroy(gameObject);
     }
 }

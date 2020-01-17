@@ -13,8 +13,8 @@ namespace NavyTap.Maps
 
         int settingMaxPerfectScoreAnimatorLayer = 1;
         int settingMinPerfectScoreAnimatorLayer = 2;
-        int _maxPerfectScoreSettingSpeedAnimatorParameter = Animator.StringToHash("MaxPerfectScoreSettingSpeed");
-        int _minPerfectScoreSettingSpeedAnimatorParameter = Animator.StringToHash("MinPerfectScoreSettingSpeed");
+        int _maxPerfectScoreSettingSpeedAnimatorFloat = Animator.StringToHash("MaxPerfectScoreSettingSpeed");
+        int _minPerfectScoreSettingSpeedAnimatorFloat = Animator.StringToHash("MinPerfectScoreSettingSpeed");
         int _setPerfectScoreAnimatorState = Animator.StringToHash("SetPerfectScore");
         Animator anim;
 
@@ -27,10 +27,10 @@ namespace NavyTap.Maps
         {
             float maxPerfectScore = perfectScore + perfectScoreDifference;
             float minPerfectScore = perfectScore - perfectScoreDifference;
-            anim.SetFloat(_maxPerfectScoreSettingSpeedAnimatorParameter, 1);
-            anim.SetFloat(_minPerfectScoreSettingSpeedAnimatorParameter, 1);
-            StartCoroutine(StopSettingScore(_maxPerfectScoreSettingSpeedAnimatorParameter, settingMaxPerfectScoreAnimatorLayer, GetTimeFromMaxScore(maxPerfectScore)));
-            StartCoroutine(StopSettingScore(_minPerfectScoreSettingSpeedAnimatorParameter, settingMinPerfectScoreAnimatorLayer, GetTimeFromMinScore(minPerfectScore)));
+            anim.SetFloat(_maxPerfectScoreSettingSpeedAnimatorFloat, 1);
+            anim.SetFloat(_minPerfectScoreSettingSpeedAnimatorFloat, 1);
+            StartCoroutine(StopSettingScore(_maxPerfectScoreSettingSpeedAnimatorFloat, settingMaxPerfectScoreAnimatorLayer, GetTimeFromMaxScore(maxPerfectScore)));
+            StartCoroutine(StopSettingScore(_minPerfectScoreSettingSpeedAnimatorFloat, settingMinPerfectScoreAnimatorLayer, GetTimeFromMinScore(minPerfectScore)));
         }
 
         private float GetTimeFromMaxScore(float maxScore)

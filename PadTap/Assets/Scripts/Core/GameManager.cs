@@ -30,6 +30,11 @@ namespace NavyTap.Core
             chosenMap = map;
         }
 
+        public Map GetChosenMap()
+        {
+            return chosenMap;
+        }
+
         public void PrepareSong()
         {
             onPrepareSong(chosenMap);
