@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace NavyTap.Core
 {
@@ -11,17 +10,27 @@ namespace NavyTap.Core
         public event OnStartSong onStartSong;
 
         [SerializeField] Map chosenMap = null;
-        private bool isPlaying = false;
+        public bool isPlaying = false;
+        public float currentTime = 0;
 
         private void Awake()
         {
             if (FindObjectsOfType<GameManager>().Length == 1)
             {
                 DontDestroyOnLoad(gameObject);
+                Application.targetFrameRate = 60;
             }
             else
             {
                 Destroy(gameObject);
+            }
+        }
+
+        private void Update()
+        {
+            if (isPlaying)
+            {
+                currentTime += Time.deltaTime;
             }
         }
 

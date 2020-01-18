@@ -1,24 +1,45 @@
-﻿using System.Collections;
+﻿using NavyTap.Maps;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Bomb : MonoBehaviour
 {
     [SerializeField] float explosionLifespan = 0.2f;
+    [SerializeField] Text tileRow = null;
+
+    private float timer = 1000;
+
+    Explosions explosions;
+    BombSpawner bombSpawner;
+
+    private void Awake()
+    {
+        explosions = FindObjectOfType<Explosions>();
+        bombSpawner = FindObjectOfType<BombSpawner>();
+    }
+
+    private void Update()
+    {
+        timer -= Time.deltaTime;
+        if (timer <= 0)
+        {
+            Explode();
+        }
+    }
 
     public void SetBombTimer(float time)
     {
-        StartCoroutine(ExplodeIn(time));
+        timer = time;
     }
 
-    private IEnumerator ExplodeIn(float time)
+    public void SetIndex(int index)
     {
-        yield return new WaitForSeconds(time);
-        Explode();
+        tileRow.text = index.ToString();
     }
 
     private void Explode()
     {
-        FindObjectOfType<Explosions>().MakeExplosion(transform.position);
-        Destroy(gameObject);
+        explosions.MakeExplosion(transform.position);
+        bombSpawner.SetNextBomb();
     }
 }

@@ -59,7 +59,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -273,9 +273,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e55b6bece0882d4bb9ba19c9cfb8a60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  explosionPrefab: {fileID: 3916794010173029087, guid: f8e2d29d4e571ce42a3adf0026325e5f,
-    type: 3}
   explosionLifespan: 0.2
+  tileRow: {fileID: 3149817720796986411}
 --- !u!95 &5259545229781541205
 Animator:
   serializedVersion: 3

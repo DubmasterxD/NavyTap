@@ -26,8 +26,8 @@ namespace NavyTap.Maps
         private void WavesFlow()
         {
             float waveSpeed = Time.deltaTime * waveSpeedMultiplier * transform.localScale.x;
-            wave1.transform.position += new Vector3(waveSpeed, 0, 0);
-            wave2.transform.position += new Vector3(waveSpeed, 0, 0);
+            wave1.transform.localPosition += new Vector3(waveSpeed, 0, 0);
+            wave2.transform.localPosition += new Vector3(waveSpeed, 0, 0);
             if (wave1.localPosition.x >= waveWidth)
             {
                 wave1.localPosition = waveSpawnPosition + new Vector3(wave2.localPosition.x, 0, 0);
